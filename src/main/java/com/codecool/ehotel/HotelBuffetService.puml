@@ -1,0 +1,84 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class Meal <<class>> {
+- time : int
+- mealType : MealType
+}
+
+entity Buffet << record >> {
+- meals : (List<Meal>):
+  + Buffet(List<Meal>):
+  + setMeals(List<Meal>):
+  + getFreshestMeal(MealType) : Meal
+}
+interface BuffetService << interface >>{
+refill(List<Meal>): void
+consumeFreshest(MealType) : bool
+collectWaste(List<Meal>) : int
+}
+
+class EHotelBuffetApplication {
+  + EHotelBuffetApplication():
+  + main(String[]): void
+}
+entity StatisticOfMeal << record >>{
+StatisticOfMeal(waste : int happiness)
+}
+class BreakfastStatistic << class >> implements Statistics {
+
+}
+class DinnerStatistic << class >> implements Statistics {
+
+}
+interface Statistics << interface >> {
+    StatisticOfMeal statisticOfMeal;
+    Statistics(statisticOfMeal)
++ rateOfHappiness() : double
++ rateOfWaste() : double
+}
+class BreakfastManager << class >> implements BuffetService {
+ + serve() : void
+
+}
+entity Guest << record >> {
+  + Guest(String, GuestType, LocalDate, LocalDate):
+  + name(): String
+  + checkIn(): LocalDate
+  + guestType(): GuestType
+  + checkOut(): LocalDate
+}
+class BreakfastGuestService << class >> implements GuestService{
+}
+interface GuestService << interface >> {
+  + generateRandomGuest(LocalDate, LocalDate): Guest ??? nem ide
+  + getGuestsForDay(List<Guest>, LocalDate): Set<Guest>
+  + getRandomBreakfastGroups(Set<Guest>) : List<Set<Guest>>
+}
+enum GuestType << enumeration >> {
+  - GuestType(List<MealType>):
+  - mealPreferences: List<MealType>
+  + valueOf(String): GuestType
+  + values(): GuestType[]
+   mealPreferences: List<MealType>
+}
+enum MealDurability << enumeration >> {
+  + MealDurability():
+  + values(): MealDurability[]
+  + valueOf(String): MealDurability
+}
+enum MealType << enumeration >> {
+  - MealType(int, MealDurability):
+  - cost: int
+  + values(): MealType[]
+  + valueOf(String): MealType
+   durability: MealDurability
+   cost: int
+}
+
+GuestType               "1" *-[#595959,plain]-> "mealPreferences\n*" MealType
+MealType                "1" *-[#595959,plain]-> "mealDurability\n1" MealDurability
+@enduml

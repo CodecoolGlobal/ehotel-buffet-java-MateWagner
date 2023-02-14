@@ -4,14 +4,14 @@
 top to bottom direction
 skinparam linetype ortho
 
-class Meal <<class>> {
-- time : int
+entity Meal <<record>> {
+- ageInCycle : int
 - mealType : MealType
 }
 
 entity Buffet << record >> {
-- meals : (List<Meal>):
-  + Buffet(List<Meal>):
++ meals : (List<Meal>):
+   Buffet(List<Meal>)
   + setMeals(List<Meal>):
   + getFreshestMeal(MealType) : Meal
 }
@@ -54,7 +54,7 @@ entity Guest << record >> {
 class BreakfastGuestService << class >> implements GuestService{
 }
 interface GuestService << interface >> {
-  + generateRandomGuest(LocalDate, LocalDate): Guest ??? nem ide
+  + generateRandomGuest(LocalDate, LocalDate): Guest
   + getGuestsForDay(List<Guest>, LocalDate): Set<Guest>
   + getRandomBreakfastGroups(Set<Guest>) : List<Set<Guest>>
 }
@@ -78,7 +78,17 @@ enum MealType << enumeration >> {
    durability: MealDurability
    cost: int
 }
+Meal --- Buffet
+Meal --- MealType
+Buffet --- BreakfastManager
+EHotelBuffetApplication --- GuestService
+StatisticOfMeal --- Statistics
+Guest --- GuestService
+MealType --- Guest
+MealDurability --- BuffetService
+
 
 GuestType               "1" *-[#595959,plain]-> "mealPreferences\n*" MealType
 MealType                "1" *-[#595959,plain]-> "mealDurability\n1" MealDurability
+
 @enduml

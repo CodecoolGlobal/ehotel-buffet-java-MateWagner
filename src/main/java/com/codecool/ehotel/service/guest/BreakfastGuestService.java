@@ -20,17 +20,37 @@ public class BreakfastGuestService implements GuestService {
     @Override
     public Guest generateRandomGuest(LocalDate seasonStart, LocalDate seasonEnd) {
         Names names = new Names();
-        int maximumDayToReserve = calculateMaximumDayToReserve(seasonStart,seasonEnd);
+
+        int maximumDayToReserve = calculateMaximumDayToReserve(seasonStart, seasonEnd);
         String randomName = names.getRandomName();
         GuestType guestType = generateRandomGuestType();
-        System.out.println(maximumDayToReserve+"\n"+randomName+"\n"+guestType);
-        return null;
+        LocalDate[] reservationPeriod = generateRandomReservationPeriodBetweenDates(maximumDayToReserve, seasonStart, seasonEnd);
+
+        return new Guest(randomName,guestType,reservationPeriod[0],reservationPeriod[1]);
     }
 
-    private GuestType generateRandomGuestType() {
+    private LocalDate[] generateRandomReservationPeriodBetweenDates(int maximumDayToReserve, LocalDate seasonStart, LocalDate seasonEnd) {
         Random random = new Random();
-        GuestType[] guestTypes = GuestType.values();
-        return guestTypes[random.nextInt(guestTypes.length)];
+
+        int reservationDayAmount = random.nextInt(1, maximumDayToReserve + 1);
+        int daysBetween = (int) ChronoUnit.DAYS.between(seasonStart, seasonEnd);
+        long differenceOfSeasonStartAndReservationStartingDay = random.nextInt(1,daysBetween-reservationDayAmount);
+
+        LocalDate periodStartingDate = seasonStart.plusDays(differenceOfSeasonStartAndReservationStartingDay);
+        periodStartingDate = manageMonthAndYearOverflow(seasonStart,periodStartingDate);
+        LocalDate periodEndingDate = periodStartingDate.plusDays(reservationDayAmount);
+        periodEndingDate = manageMonthAndYearOverflow(periodStartingDate,periodEndingDate);
+        return new LocalDate[]{periodStartingDate,periodEndingDate};
+    }
+
+    private LocalDate manageMonthAndYearOverflow(LocalDate originalDate, LocalDate modifiedDate) {
+        if(originalDate.getMonthValue()!= modifiedDate.getMonthValue()){
+            modifiedDate = modifiedDate.plusMonths(1);
+            if(originalDate.getYear()!=modifiedDate.getYear()){
+                modifiedDate = modifiedDate.plusYears(1);
+            }
+        }
+        return modifiedDate;
     }
 
     @Override
@@ -41,5 +61,11 @@ public class BreakfastGuestService implements GuestService {
     private int calculateMaximumDayToReserve(LocalDate minuendDate, LocalDate subtrahendDate) {
         long daysBetween = ChronoUnit.DAYS.between(minuendDate, subtrahendDate);
         return accommodationDayLimit > daysBetween ? (int) daysBetween : accommodationDayLimit;
+    }
+
+    private GuestType generateRandomGuestType() {
+        Random random = new Random();
+        GuestType[] guestTypes = GuestType.values();
+        return guestTypes[random.nextInt(guestTypes.length)];
     }
 }

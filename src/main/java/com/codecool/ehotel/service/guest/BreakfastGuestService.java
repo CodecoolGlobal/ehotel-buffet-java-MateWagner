@@ -2,6 +2,7 @@ package com.codecool.ehotel.service.guest;
 
 import com.codecool.ehotel.data.Names;
 import com.codecool.ehotel.model.Guest;
+import com.codecool.ehotel.model.GuestType;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -21,8 +22,15 @@ public class BreakfastGuestService implements GuestService {
         Names names = new Names();
         int maximumDayToReserve = calculateMaximumDayToReserve(seasonStart,seasonEnd);
         String randomName = names.getRandomName();
-        System.out.println(maximumDayToReserve+"\n"+randomName);
+        GuestType guestType = generateRandomGuestType();
+        System.out.println(maximumDayToReserve+"\n"+randomName+"\n"+guestType);
         return null;
+    }
+
+    private GuestType generateRandomGuestType() {
+        Random random = new Random();
+        GuestType[] guestTypes = GuestType.values();
+        return guestTypes[random.nextInt(guestTypes.length)];
     }
 
     @Override

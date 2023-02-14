@@ -4,14 +4,14 @@
 top to bottom direction
 skinparam linetype ortho
 
-class Meal <<class>> {
-- time : int
+entity Meal <<record>> {
+- ageInCycle : int
 - mealType : MealType
 }
 
 entity Buffet << record >> {
-- meals : (List<Meal>):
-  + Buffet(List<Meal>):
++ meals : (List<Meal>):
+   Buffet(List<Meal>)
   + setMeals(List<Meal>):
   + getFreshestMeal(MealType) : Meal
 }
@@ -25,9 +25,6 @@ class EHotelBuffetApplication {
   + EHotelBuffetApplication():
   + main(String[]): void
 }
-entity StatisticOfMeal << record >>{
-StatisticOfMeal(waste : int happiness)
-}
 class BreakfastStatistic << class >> implements Statistics {
 
 }
@@ -35,6 +32,8 @@ class DinnerStatistic << class >> implements Statistics {
 
 }
 interface Statistics << interface >> {
+- seasonalStatistic : HasMap
+- dalyStatistic : HasMap
     StatisticOfMeal statisticOfMeal;
     Statistics(statisticOfMeal)
 + rateOfHappiness() : double
@@ -52,11 +51,11 @@ entity Guest << record >> {
   + checkOut(): LocalDate
 }
 class BreakfastGuestService << class >> implements GuestService{
++ getRandomBreakfastGroups(Set<Guest>) : List<Set<Guest>>
 }
 interface GuestService << interface >> {
-  + generateRandomGuest(LocalDate, LocalDate): Guest ??? nem ide
+  + generateRandomGuest(LocalDate, LocalDate): Guest
   + getGuestsForDay(List<Guest>, LocalDate): Set<Guest>
-  + getRandomBreakfastGroups(Set<Guest>) : List<Set<Guest>>
 }
 enum GuestType << enumeration >> {
   - GuestType(List<MealType>):
@@ -78,7 +77,16 @@ enum MealType << enumeration >> {
    durability: MealDurability
    cost: int
 }
+Meal --- Buffet
+Meal --- MealType
+Buffet --- BreakfastManager
+EHotelBuffetApplication --- GuestService
+Guest --- GuestService
+MealType --- Guest
+MealDurability --- BuffetService
+BreakfastManager --- BreakfastStatistic
 
 GuestType               "1" *-[#595959,plain]-> "mealPreferences\n*" MealType
 MealType                "1" *-[#595959,plain]-> "mealDurability\n1" MealDurability
+
 @enduml

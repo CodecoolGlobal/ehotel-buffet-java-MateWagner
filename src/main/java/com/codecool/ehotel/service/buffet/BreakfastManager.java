@@ -1,16 +1,17 @@
 package com.codecool.ehotel.service.buffet;
 
-import com.codecool.ehotel.model.Buffet;
-import com.codecool.ehotel.model.Meal;
-import com.codecool.ehotel.model.MealType;
+import com.codecool.ehotel.model.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.PriorityQueue;
 
 public class BreakfastManager implements BuffetService {
 
     Buffet buffet;
     Map<Meal, Integer> batch;
+
 
     public BreakfastManager(Buffet buffet) {
         this.buffet = buffet;
@@ -32,12 +33,42 @@ public class BreakfastManager implements BuffetService {
     }
 
     @Override
-    public boolean consumeFreshest(MealType mealType) {
-
-        Optional<Meal> freshMeal = buffet.getFreshestMeal(mealType);
-        freshMeal.ifPresent(meal -> buffet.serveMeal(meal));
-
+    public boolean consumeFreshest(List<MealType> preference) {
+        Optional<Meal> freshMeal = null;
+        int i = 0;
+        while(i < preference.size() && !freshMeal.isPresent()){
+            freshMeal = buffet.getFreshestMeal(preference.get(i));
+            freshMeal.ifPresent(meal -> buffet.serveMeal(meal));
+            i++;
+        }
         return freshMeal.isPresent();
+    }
+
+    @Override
+    public int collectWaste(PriorityQueue<Meal> meals, int cycleNumber) {
+        int costOfWastedMeals = 0;
+        for (Meal meal : meals) {
+            if (cycleNumber >= 8) {
+                if (meal.mealType().getDurability().equals(MealDurability.SHORT) || meal.mealType().getDurability().equals(MealDurability.MEDIUM)) {
+                    meals.remove(meal);
+                    costOfWastedMeals += meal.mealType().getCost();
+                }
+            }
+            if (meal.ageCycle() > meal.mealType().getDurability().getAgeCycleLimit())
+                meals.remove(meal);
+            costOfWastedMeals += meal.mealType().getCost();
+
+        }
+        return costOfWastedMeals;
+    }
+
+    public void serve(List<Guest> guests) {
+
+        refill(batch, buffet);
+        for (Guest guest : guests) {
+
+            consumeFreshest(guest.guestType().getMealPreferences());
+        }
     }
 }
 

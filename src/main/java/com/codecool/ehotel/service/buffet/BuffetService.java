@@ -5,8 +5,10 @@ import com.codecool.ehotel.model.Meal;
 import com.codecool.ehotel.model.MealType;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.PriorityQueue;
 
 public interface BuffetService {
 
@@ -14,7 +16,7 @@ public interface BuffetService {
 
      void refill(Map<Meal, Integer> batch, Buffet buffet);
 
-     boolean consumeFreshest(MealType mealType);
+     boolean consumeFreshest(List<MealType> preference);
 
-
+     int collectWaste(PriorityQueue<Meal> meals, int cycleNumber);
 }

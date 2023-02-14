@@ -26,14 +26,14 @@ public class BreakfastManager implements BuffetService {
     }
 
     @Override
-    public void createBach(MealType mealType, int portion, int timeStamp) {
+    public void createBatch(MealType mealType, int portion, int timeStamp) {
         batch.put(new FoodItem(0, mealType), portion);
     }
 
     @Override
     public boolean consumeFreshest(List<MealType> preference) {
         Optional<FoodItem> freshMeal = getFreshMeal(preference);
-        freshMeal.ifPresent(meal -> buffet.removeOne(meal));
+        freshMeal.ifPresent(buffet::removeOne);
         return freshMeal.isPresent();
     }
 

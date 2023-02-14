@@ -1,7 +1,8 @@
 package com.codecool.ehotel.service.buffet;
 
 import com.codecool.ehotel.model.Buffet;
-import com.codecool.ehotel.model.Meal;
+import com.codecool.ehotel.model.FoodItem;
+import com.codecool.ehotel.model.FoodType;
 import com.codecool.ehotel.model.MealType;
 
 import java.time.LocalDate;
@@ -14,9 +15,9 @@ public interface BuffetService {
 
      void createBach(MealType mealType, int portion, int timeStamp);
 
-     void refill(Map<Meal, Integer> batch, Buffet buffet);
+     List<FoodItem> refill(Map<FoodItem, Integer> batch, Buffet buffet);
 
      boolean consumeFreshest(List<MealType> preference);
 
-     int collectWaste(Queue<Meal> meals, int cycleNumber);
+     int collectWaste(List<FoodItem> meals, int cycleNumber);
 }

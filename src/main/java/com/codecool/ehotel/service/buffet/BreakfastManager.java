@@ -7,7 +7,7 @@ import java.util.*;
 public class BreakfastManager implements BuffetService {
 
     Buffet buffet;
-    Map<Meal, Integer> batch;
+    Map<FoodItem, Integer> batch;
 
 
     public BreakfastManager(Buffet buffet) {
@@ -15,59 +15,45 @@ public class BreakfastManager implements BuffetService {
         this.batch = new HashMap<>();
     }
 
-    @Override
-    public void createBach(MealType mealType, int portion, int timeStamp) {
-
-        batch.put(new Meal(0, mealType), portion);
-    }
-
-    public void refill(Map<Meal, Integer> batch, Buffet buffet) {
-
-        for (Map.Entry<Meal, Integer> entry : batch.entrySet()) {
+    public List<FoodItem> refill(Map<FoodItem, Integer> batch, Buffet buffet) {
+        List<FoodItem> newFoods = new ArrayList<>();
+        for (Map.Entry<FoodItem, Integer> entry : batch.entrySet()) {
             for (int i = 0; i < entry.getValue(); i++)
-                buffet.meals().offer(entry.getKey());
+                newFoods.add(entry.getKey());
         }
         batch.clear();
+        return newFoods;
+    }
+
+    @Override
+    public void createBach(MealType mealType, int portion, int timeStamp) {
+        batch.put(new FoodItem(0, mealType), portion);
     }
 
     @Override
     public boolean consumeFreshest(List<MealType> preference) {
-        Optional<Meal> freshMeal = getFreshMeal(preference);
-        freshMeal.ifPresent(meal -> buffet.serveMeal(meal));
+        Optional<FoodItem> freshMeal = getFreshMeal(preference);
+        freshMeal.ifPresent(meal -> buffet.removeOne(meal));
         return freshMeal.isPresent();
     }
 
     @Override
-    public int collectWaste(Queue<Meal> meals, int cycleNumber) {
-        int costOfWastedMeals = 0;
-        for (Meal meal : meals) {
-            if (cycleNumber >= 8) {
-                if (meal.mealType().getDurability().equals(MealDurability.SHORT) || meal.mealType().getDurability().equals(MealDurability.MEDIUM)) {
-                    meals.remove(meal);
-                    costOfWastedMeals += meal.mealType().getCost();
-                }
-            }
-            if (meal.ageCycle() > meal.mealType().getDurability().getAgeCycleLimit())
-                meals.remove(meal);
-            costOfWastedMeals += meal.mealType().getCost();
-
-        }
-        return costOfWastedMeals;
+    public int collectWaste(List<FoodItem> wastedMeals, int cycleNumber) {
+        return wastedMeals.stream()
+                .mapToInt(meal -> meal.getType().getCost())
+                .sum();
     }
 
     public void serve(List<Guest> guests) {
-
         refill(batch, buffet);
-        for (Guest guest : guests) {
-
+        for (Guest guest : guests)
             consumeFreshest(guest.guestType().getMealPreferences());
-        }
     }
 
-    private Optional<Meal> getFreshMeal(List<MealType> preference) {
-        Optional<Meal> freshMeal = Optional.empty();
+    private Optional<FoodItem> getFreshMeal(List<MealType> preference) {
+        Optional<FoodItem> freshMeal = Optional.empty();
         int i = 0;
-        while(i < preference.size() && freshMeal.isEmpty()){
+        while (i < preference.size() && freshMeal.isEmpty()) {
             freshMeal = buffet.getFreshestMeal(preference.get(i));
             i++;
         }

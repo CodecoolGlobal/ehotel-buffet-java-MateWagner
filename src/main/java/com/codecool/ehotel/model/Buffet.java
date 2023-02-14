@@ -23,7 +23,7 @@ public record Buffet(List<FoodItem> foodItems) {
     private void increaseAgePairItem() {
         foodItems.forEach(FoodItem::increaseAge);
     }
-    public List<FoodItem> collectWaste(){
+    public List<FoodItem> collectWastedMeals(){
         return foodItems.stream().filter(FoodItem::isItemExpired).toList();
     }
 

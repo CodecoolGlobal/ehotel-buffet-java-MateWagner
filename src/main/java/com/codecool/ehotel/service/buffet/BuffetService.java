@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.PriorityQueue;
+import java.util.Queue;
 
 public interface BuffetService {
 
@@ -18,5 +18,5 @@ public interface BuffetService {
 
      boolean consumeFreshest(List<MealType> preference);
 
-     int collectWaste(PriorityQueue<Meal> meals, int cycleNumber);
+     int collectWaste(Queue<Meal> meals, int cycleNumber);
 }

@@ -2,10 +2,7 @@ package com.codecool.ehotel.service.buffet;
 
 import com.codecool.ehotel.model.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.PriorityQueue;
+import java.util.*;
 
 public class BreakfastManager implements BuffetService {
 
@@ -15,6 +12,7 @@ public class BreakfastManager implements BuffetService {
 
     public BreakfastManager(Buffet buffet) {
         this.buffet = buffet;
+        this.batch = new HashMap<>();
     }
 
     @Override
@@ -34,18 +32,13 @@ public class BreakfastManager implements BuffetService {
 
     @Override
     public boolean consumeFreshest(List<MealType> preference) {
-        Optional<Meal> freshMeal = null;
-        int i = 0;
-        while(i < preference.size() && !freshMeal.isPresent()){
-            freshMeal = buffet.getFreshestMeal(preference.get(i));
-            freshMeal.ifPresent(meal -> buffet.serveMeal(meal));
-            i++;
-        }
+        Optional<Meal> freshMeal = getFreshMeal(preference);
+        freshMeal.ifPresent(meal -> buffet.serveMeal(meal));
         return freshMeal.isPresent();
     }
 
     @Override
-    public int collectWaste(PriorityQueue<Meal> meals, int cycleNumber) {
+    public int collectWaste(Queue<Meal> meals, int cycleNumber) {
         int costOfWastedMeals = 0;
         for (Meal meal : meals) {
             if (cycleNumber >= 8) {
@@ -69,6 +62,16 @@ public class BreakfastManager implements BuffetService {
 
             consumeFreshest(guest.guestType().getMealPreferences());
         }
+    }
+
+    private Optional<Meal> getFreshMeal(List<MealType> preference) {
+        Optional<Meal> freshMeal = Optional.empty();
+        int i = 0;
+        while(i < preference.size() && freshMeal.isEmpty()){
+            freshMeal = buffet.getFreshestMeal(preference.get(i));
+            i++;
+        }
+        return freshMeal;
     }
 }
 

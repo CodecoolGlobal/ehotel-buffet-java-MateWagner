@@ -30,7 +30,7 @@ public class Buffet {
     public void increaseAgePairItem() {
         foodItems.forEach(FoodItem::increaseAge);
     }
-    public List<FoodItem> collectWaste(){
+    public List<FoodItem> expiredMeals(){
         return foodItems.stream().filter(FoodItem::isItemExpired).toList();
     }
 

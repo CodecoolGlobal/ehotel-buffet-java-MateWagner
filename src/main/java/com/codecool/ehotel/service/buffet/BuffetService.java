@@ -15,5 +15,5 @@ public interface BuffetService {
 
      boolean consumeFreshest(List<MealType> preference);
 
-     int collectWaste(List<FoodItem> meals, int cycleNumber);
+     int collectWaste(List<FoodItem> meals);
 }

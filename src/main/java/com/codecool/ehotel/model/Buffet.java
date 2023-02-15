@@ -20,10 +20,10 @@ public record Buffet(List<FoodItem> foodItems) {
                  .sorted((o1, o2) -> o1.getAgeCycle() - o2.getAgeCycle())
                  .findFirst();
     }
-    private void increaseAgePairItem() {
+    public void increaseAgePairItem() {
         foodItems.forEach(FoodItem::increaseAge);
     }
-    public List<FoodItem> collectWastedMeals(){
+    public List<FoodItem> expiredMeals(){
         return foodItems.stream().filter(FoodItem::isItemExpired).toList();
     }
 

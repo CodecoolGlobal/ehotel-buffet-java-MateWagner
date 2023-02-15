@@ -5,9 +5,24 @@ import com.codecool.ehotel.model.*;
 import java.util.*;
 
 public class BreakfastManager implements BuffetService {
-
     Buffet buffet;
     Map<FoodItem, Integer> batch;
+
+   // int cycle = 0;
+    public void serve(List<Guest> guests) {
+        //Refill the buffet
+        refill(batch, buffet);
+        //Try to feed the guests
+        for (Guest guest : guests)
+            if (!consumeFreshest(guest.guestType().getMealPreferences()))
+                // TODO: Set guest happiness to unhappy
+                System.out.println("Guest is unhappy!");  // <- This is just a placeholder!!!
+        //Returns the cost of all wasted meals
+        //TODO: add the cost to the statistics
+        collectWaste(buffet.expiredMeals());
+
+        buffet.increaseAgePairItem();
+    }
 
     public BreakfastManager(Buffet buffet) {
         this.buffet = buffet;
@@ -37,16 +52,12 @@ public class BreakfastManager implements BuffetService {
     }
 
     @Override
-    public int collectWaste(List<FoodItem> wastedMeals, int cycleNumber) {
-        return wastedMeals.stream()
+    public int collectWaste(List<FoodItem> expiredMeals) {
+        int costOfWastedMeals = expiredMeals.stream()
                 .mapToInt(meal -> meal.getType().getCost())
                 .sum();
-    }
-
-    public void serve(List<Guest> guests) {
-        refill(batch, buffet);
-        for (Guest guest : guests)
-            consumeFreshest(guest.guestType().getMealPreferences());
+        buffet.removeMany(expiredMeals);
+        return costOfWastedMeals;
     }
 
     private Optional<FoodItem> getFreshMeal(List<MealType> preference) {

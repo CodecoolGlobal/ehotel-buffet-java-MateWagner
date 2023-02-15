@@ -9,20 +9,19 @@ public class BreakfastManager implements BuffetService {
     Buffet buffet;
     Map<FoodItem, Integer> batch;
 
-
     public BreakfastManager(Buffet buffet) {
         this.buffet = buffet;
         this.batch = new HashMap<>();
     }
 
-    public List<FoodItem> refill(Map<FoodItem, Integer> batch, Buffet buffet) {
+    public void refill(Map<FoodItem, Integer> batch, Buffet buffet) {
         List<FoodItem> newFoods = new ArrayList<>();
         for (Map.Entry<FoodItem, Integer> entry : batch.entrySet()) {
             for (int i = 0; i < entry.getValue(); i++)
                 newFoods.add(entry.getKey());
         }
+        buffet.addMany(newFoods);
         batch.clear();
-        return newFoods;
     }
 
     @Override

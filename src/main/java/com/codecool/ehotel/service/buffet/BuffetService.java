@@ -11,7 +11,7 @@ public interface BuffetService {
 
      void createBatch(MealType mealType, int portion, int timeStamp);
 
-     List<FoodItem> refill(Map<FoodItem, Integer> batch, Buffet buffet);
+     void refill(Map<FoodItem, Integer> batch, Buffet buffet);
 
      boolean consumeFreshest(List<MealType> preference);
 

@@ -1,6 +1,5 @@
 package com.codecool.ehotel.service.guest;
 import com.codecool.ehotel.model.Guest;
-import org.junit.Assert;
 import  org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -13,7 +12,7 @@ class GuestServiceTest {
     @Test
     void generateRandomGuest() {
         Guest guest = breakfastGuestService.generateRandomGuest(LocalDate.parse("2000-01-01"),LocalDate.parse("2000-01-01"));
-        assertTrue(guest.checkIn().isEqual(guest.checkOut()));
+        assertTrue(guest.getCheckIn().isEqual(guest.getCheckOut()));
     }
 
     @Test

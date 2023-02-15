@@ -22,8 +22,8 @@ public class BreakfastGuestService implements GuestService {
     public Set<Guest> getGuestsForDay(List<Guest> guests, LocalDate date) {
         Set<Guest> guestsForDay = new HashSet<>();
         for (Guest guest : guests) {
-            if ((guest.checkIn().isEqual(date) || guest.checkIn().isBefore(date) &&
-                    (guest.checkOut().isEqual(date) || guest.checkOut().isAfter(date)))) {
+            if ((guest.getCheckIn().isEqual(date) || guest.getCheckIn().isBefore(date) &&
+                    (guest.getCheckOut().isEqual(date) || guest.getCheckOut().isAfter(date)))) {
                 guestsForDay.add(guest);
             }
         }

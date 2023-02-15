@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BuffetTest {
     List<FoodItem> items;
-    Buffet buffet = new Buffet();
+    Buffet buffet = new Buffet(new ArrayList<>());
 
     @BeforeEach
     void initList() {
@@ -26,7 +26,7 @@ class BuffetTest {
     @Test
     void addMany() {
         buffet.addMany(items);
-        assertEquals(5, buffet.getFoodItems().size());
+        assertEquals(5, buffet.foodItems().size());
     }
 
     @Test
@@ -34,14 +34,14 @@ class BuffetTest {
         buffet = new Buffet(items);
         List<FoodItem> things = List.of(items.get(0), items.get(1));
         buffet.removeMany(things);
-        assertEquals(3, buffet.getFoodItems().size());
+        assertEquals(3, buffet.foodItems().size());
     }
 
     @Test
     void removeOne() {
         buffet = new Buffet(items);
         buffet.removeOne(items.get(1));
-        assertEquals(4, buffet.getFoodItems().size());
+        assertEquals(4, buffet.foodItems().size());
     }
 
     @Test
@@ -56,7 +56,7 @@ class BuffetTest {
     @Test
     void collectWaste() {
         buffet = new Buffet(items);
-        List<FoodItem> waste = buffet.collectWaste();
+        List<FoodItem> waste = buffet.expiredMeals();
         assertEquals(1, waste.size());
     }
 
@@ -64,7 +64,7 @@ class BuffetTest {
     void increaseAgePairItem() {
         buffet = new Buffet(items);
         buffet.increaseAgePairItem();
-        List<FoodItem> waste = buffet.collectWaste();
+        List<FoodItem> waste = buffet.expiredMeals();
         assertEquals(3, waste.size());
     }
     @Test

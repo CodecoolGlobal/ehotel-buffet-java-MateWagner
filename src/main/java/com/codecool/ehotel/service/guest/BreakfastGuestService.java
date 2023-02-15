@@ -44,29 +44,24 @@ public class BreakfastGuestService implements GuestService {
 
     private LocalDate[] generateRandomReservationPeriodBetweenDates(int maximumDayToReserve, LocalDate seasonStart, LocalDate seasonEnd) {
         Random random = new Random();
-
-        int reservationDayAmount = random.nextInt( maximumDayToReserve ) + 1;
-        int seasonDuration = (int) ChronoUnit.DAYS.between(seasonStart, seasonEnd)+1;
-        long differenceOfSeasonStartAndReservationStartingDay = random.nextInt(-1, seasonDuration - reservationDayAmount)+1;
-
-        LocalDate periodStartingDate = seasonStart.plusDays(differenceOfSeasonStartAndReservationStartingDay);
-        periodStartingDate = manageMonthAndYearOverflow(seasonStart, periodStartingDate);
-        LocalDate periodEndingDate = periodStartingDate.plusDays(reservationDayAmount);
-        periodEndingDate = manageMonthAndYearOverflow(periodStartingDate, periodEndingDate);
-
-        return new LocalDate[]{periodStartingDate, periodEndingDate};
-    }
-
-    private LocalDate manageMonthAndYearOverflow(LocalDate originalDate, LocalDate modifiedDate) {
-        if (originalDate.getMonthValue() != modifiedDate.getMonthValue()) {
-            modifiedDate = modifiedDate.plusMonths(1);
-            if (originalDate.getYear() != modifiedDate.getYear()) {
-                modifiedDate = modifiedDate.plusYears(1);
-            }
+        if (maximumDayToReserve == 1) {
+            return new LocalDate[]{seasonStart, seasonEnd};
         }
-        return modifiedDate;
-    }
 
+        int reservationDayAmount = random.nextInt(maximumDayToReserve);
+        int seasonDuration = (int) ChronoUnit.DAYS.between(seasonStart, seasonEnd) + 1;
+        if (reservationDayAmount != seasonDuration) {
+            long differenceOfSeasonStartAndReservationStartingDay = random.nextInt(seasonDuration - reservationDayAmount);
+            LocalDate periodStartingDate = seasonStart.plusDays(differenceOfSeasonStartAndReservationStartingDay);
+            LocalDate periodEndingDate = periodStartingDate.plusDays(reservationDayAmount);
+            return new LocalDate[]{periodStartingDate, periodEndingDate};
+        }
+        else {
+            LocalDate periodEndingDate = seasonStart.plusDays(reservationDayAmount);
+            return new LocalDate[]{seasonStart, periodEndingDate};
+        }
+
+    }
 
     private int calculateMaximumDayToReserve(LocalDate minuendDate, LocalDate subtrahendDate) {
         long days = ChronoUnit.DAYS.between(minuendDate, subtrahendDate) + 1;

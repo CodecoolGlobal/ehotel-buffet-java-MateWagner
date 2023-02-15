@@ -16,7 +16,7 @@ public class EHotelBuffetApplication {
 
         // Generate guests for the season
         BreakfastGuestService breakfastGuestService = new BreakfastGuestService(7);
-        Guest guest = breakfastGuestService.generateRandomGuest(LocalDate.parse("2000-01-01"),LocalDate.parse("2000-01-02"));
+        Guest guest = breakfastGuestService.generateRandomGuest(LocalDate.parse("2000-01-01"),LocalDate.parse("2000-01-04"));
         List<Guest> guests = new ArrayList<>();
         System.out.println(guest.toString());
         System.out.println(breakfastGuestService.getGuestsForDay(guests, LocalDate.parse("2000-01-02")).toString());

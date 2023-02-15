@@ -7,6 +7,6 @@ public record Guest(String name, GuestType guestType, LocalDate checkIn, LocalDa
 
     @Override
     public String toString() {
-        return "| " + name + " | " + guestType + " | (" + checkIn + ") - (" + checkOut+")";
+        return "| " + name + " | " + guestType + " | (" + checkIn + ") - (" + checkOut + ")";
     }
 }

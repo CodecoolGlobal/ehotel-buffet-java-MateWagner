@@ -1,32 +1,36 @@
 package com.codecool.ehotel.service.buffet;
 
 import com.codecool.ehotel.model.*;
+import com.codecool.ehotel.service.Statistic;
 
 import java.util.*;
 
 public class BreakfastManager implements BuffetService {
     Buffet buffet;
+    Statistic statistic;
     Map<FoodItem, Integer> batch;
 
    // int cycle = 0;
+    public BreakfastManager(Buffet buffet, Statistic statistic) {
+        this.buffet = buffet;
+        this.statistic = statistic;
+        this.batch = new HashMap<>();
+    }
+
     public void serve(List<Guest> guests) {
         //Refill the buffet
         refill(batch, buffet);
         //Try to feed the guests
         for (Guest guest : guests)
-            if (!consumeFreshest(guest.guestType().getMealPreferences()))
+            if (!consumeFreshest(guest.getGuestType().getMealPreferences()))
                 // TODO: Set guest happiness to unhappy
                 System.out.println("Guest is unhappy!");  // <- This is just a placeholder!!!
-        //Returns the cost of all wasted meals
-        //TODO: add the cost to the statistics
-        collectWaste(buffet.expiredMeals());
+        //Check the guests list's guest happiness and collect the amount of unhappy ones
+        statistic.collectUnHappyGuestAmount(guests);
+        //Store in the statistic the cost of all wasted meals
+        statistic.collectCostOfWastedFoodPerCycle(collectWaste(buffet.expiredMeals()));
 
         buffet.increaseAgePairItem();
-    }
-
-    public BreakfastManager(Buffet buffet) {
-        this.buffet = buffet;
-        this.batch = new HashMap<>();
     }
 
     public void refill(Map<FoodItem, Integer> batch, Buffet buffet) {

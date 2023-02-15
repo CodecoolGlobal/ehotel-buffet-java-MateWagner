@@ -6,6 +6,7 @@ import com.codecool.ehotel.model.GuestType;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -18,6 +19,18 @@ public class BreakfastGuestService implements GuestService {
     }
 
     @Override
+    public Set<Guest> getGuestsForDay(List<Guest> guests, LocalDate date) {
+        Set<Guest> guestsForDay = new HashSet<>();
+        for (Guest guest : guests) {
+            if ((guest.checkIn().isEqual(date) || guest.checkIn().isBefore(date) &&
+                    (guest.checkOut().isEqual(date) || guest.checkOut().isAfter(date)))) {
+                guestsForDay.add(guest);
+            }
+        }
+        return guestsForDay;
+    }
+
+    @Override
     public Guest generateRandomGuest(LocalDate seasonStart, LocalDate seasonEnd) {
         Names names = new Names();
 
@@ -26,7 +39,7 @@ public class BreakfastGuestService implements GuestService {
         GuestType guestType = generateRandomGuestType();
         LocalDate[] reservationPeriod = generateRandomReservationPeriodBetweenDates(maximumDayToReserve, seasonStart, seasonEnd);
 
-        return new Guest(randomName,guestType,reservationPeriod[0],reservationPeriod[1]);
+        return new Guest(randomName, guestType, reservationPeriod[0], reservationPeriod[1]);
     }
 
     private LocalDate[] generateRandomReservationPeriodBetweenDates(int maximumDayToReserve, LocalDate seasonStart, LocalDate seasonEnd) {
@@ -34,29 +47,25 @@ public class BreakfastGuestService implements GuestService {
 
         int reservationDayAmount = random.nextInt(1, maximumDayToReserve + 1);
         int daysBetween = (int) ChronoUnit.DAYS.between(seasonStart, seasonEnd);
-        long differenceOfSeasonStartAndReservationStartingDay = random.nextInt(1,daysBetween-reservationDayAmount);
+        long differenceOfSeasonStartAndReservationStartingDay = random.nextInt(1, daysBetween - reservationDayAmount);
 
         LocalDate periodStartingDate = seasonStart.plusDays(differenceOfSeasonStartAndReservationStartingDay);
-        periodStartingDate = manageMonthAndYearOverflow(seasonStart,periodStartingDate);
+        periodStartingDate = manageMonthAndYearOverflow(seasonStart, periodStartingDate);
         LocalDate periodEndingDate = periodStartingDate.plusDays(reservationDayAmount);
-        periodEndingDate = manageMonthAndYearOverflow(periodStartingDate,periodEndingDate);
-        return new LocalDate[]{periodStartingDate,periodEndingDate};
+        periodEndingDate = manageMonthAndYearOverflow(periodStartingDate, periodEndingDate);
+        return new LocalDate[]{periodStartingDate, periodEndingDate};
     }
 
     private LocalDate manageMonthAndYearOverflow(LocalDate originalDate, LocalDate modifiedDate) {
-        if(originalDate.getMonthValue()!= modifiedDate.getMonthValue()){
+        if (originalDate.getMonthValue() != modifiedDate.getMonthValue()) {
             modifiedDate = modifiedDate.plusMonths(1);
-            if(originalDate.getYear()!=modifiedDate.getYear()){
+            if (originalDate.getYear() != modifiedDate.getYear()) {
                 modifiedDate = modifiedDate.plusYears(1);
             }
         }
         return modifiedDate;
     }
 
-    @Override
-    public Set<Guest> getGuestsForDay(List<Guest> guests, LocalDate date) {
-        return null;
-    }
 
     private int calculateMaximumDayToReserve(LocalDate minuendDate, LocalDate subtrahendDate) {
         long daysBetween = ChronoUnit.DAYS.between(minuendDate, subtrahendDate);

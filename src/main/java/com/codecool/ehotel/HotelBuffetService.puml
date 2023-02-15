@@ -1,19 +1,18 @@
 @startuml
 
-!theme plain
+
 top to bottom direction
 skinparam linetype ortho
-
-class Meal <<class>> {
-- time : int
-- mealType : MealType
-}
-
 entity Buffet << record >> {
-- meals : (List<Meal>):
-  + Buffet(List<Meal>):
-  + setMeals(List<Meal>):
-  + getFreshestMeal(MealType) : Meal
+
+  + Buffet(List<FoodItem>):
+  + collectWaste(): List<FoodItem>
+  + foodItems(): List<FoodItem>
+  - increaseAgePairItem(): void
+  + getFreshestMeal(FoodType): Optional<FoodItem>
+  + addMany(List<FoodItem>): void
+  + removeMany(List<FoodItem>): void
+  + removeOne(FoodItem): void
 }
 interface BuffetService << interface >>{
 refill(List<Meal>): void
@@ -25,9 +24,6 @@ class EHotelBuffetApplication {
   + EHotelBuffetApplication():
   + main(String[]): void
 }
-entity StatisticOfMeal << record >>{
-StatisticOfMeal(waste : int happiness)
-}
 class BreakfastStatistic << class >> implements Statistics {
 
 }
@@ -35,14 +31,16 @@ class DinnerStatistic << class >> implements Statistics {
 
 }
 interface Statistics << interface >> {
-    StatisticOfMeal statisticOfMeal;
-    Statistics(statisticOfMeal)
+- seasonalStatistic : HasMap
+- dalyStatistic : HasMap
+    -StatisticOfMeal statisticOfMeal;
+ +Statistics(statisticOfMeal)
 + rateOfHappiness() : double
 + rateOfWaste() : double
 }
 class BreakfastManager << class >> implements BuffetService {
+-buffet : Buffet
  + serve() : void
-
 }
 entity Guest << record >> {
   + Guest(String, GuestType, LocalDate, LocalDate):
@@ -52,18 +50,20 @@ entity Guest << record >> {
   + checkOut(): LocalDate
 }
 class BreakfastGuestService << class >> implements GuestService{
++ getRandomBreakfastGroups(Set<Guest>) : List<Set<Guest>>
 }
 interface GuestService << interface >> {
-  + generateRandomGuest(LocalDate, LocalDate): Guest ??? nem ide
+  + generateRandomGuest(LocalDate, LocalDate): Guest
   + getGuestsForDay(List<Guest>, LocalDate): Set<Guest>
-  + getRandomBreakfastGroups(Set<Guest>) : List<Set<Guest>>
 }
 enum GuestType << enumeration >> {
+    BUSINESS,
+    TOURIST,
+    KID;
   - GuestType(List<MealType>):
   - mealPreferences: List<MealType>
   + valueOf(String): GuestType
   + values(): GuestType[]
-   mealPreferences: List<MealType>
 }
 enum MealDurability << enumeration >> {
   + MealDurability():
@@ -71,14 +71,45 @@ enum MealDurability << enumeration >> {
   + valueOf(String): MealDurability
 }
 enum MealType << enumeration >> {
+    SCRAMBLED_EGGS (70, SHORT)
+    SUNNY_SIDE_UP (70, SHORT)
+    FRIED_SAUSAGE(100, SHORT)
+    FRIED_BACON(70, SHORT)
+    PANCAKE(40, SHORT)
+    CROISSANT(40, SHORT)
+    MASHED_POTATO(20, MEDIUM)
+    MUFFIN(20, MEDIUM)
+    BUN(10, MEDIUM)
+    CEREAL(30, LONG)
+    MILK(10, LONG)
   - MealType(int, MealDurability):
   - cost: int
-  + values(): MealType[]
   + valueOf(String): MealType
+  + values(): MealType[]
+   durability: MealDurability
+}
+class FoodItem {
+  + FoodItem(int, FoodType):
+  - type: FoodType
+  - ageCycle: int
+  + increaseAge(): void
+  + isItemExpired(): boolean
+}
+interface FoodType << interface >> {
    durability: MealDurability
    cost: int
 }
+entity Menu << Future >> implements FoodType {
+-durability : MealDurability
+-cost : int
+Menu(int, MealDurability)
+}
 
-GuestType               "1" *-[#595959,plain]-> "mealPreferences\n*" MealType
-MealType                "1" *-[#595959,plain]-> "mealDurability\n1" MealDurability
+
+Buffet                  "1" *-[#595959,plain]-> "foodItems\n*" FoodItem
+        FoodItem                "1" *-[#595959,plain]-> "type\n1" FoodType
+        GuestType               "1" *-[#595959,plain]-> "mealPreferences\n*" MealType
+        MealType                 -[#008200,dashed]-^  FoodType
+        MealType                "1" *-[#595959,plain]-> "mealDurability\n1" MealDurability
+
 @enduml

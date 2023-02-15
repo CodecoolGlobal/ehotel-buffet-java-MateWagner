@@ -45,14 +45,15 @@ public class BreakfastGuestService implements GuestService {
     private LocalDate[] generateRandomReservationPeriodBetweenDates(int maximumDayToReserve, LocalDate seasonStart, LocalDate seasonEnd) {
         Random random = new Random();
 
-        int reservationDayAmount = random.nextInt(1, maximumDayToReserve + 1);
-        int daysBetween = (int) ChronoUnit.DAYS.between(seasonStart, seasonEnd);
-        long differenceOfSeasonStartAndReservationStartingDay = random.nextInt(1, daysBetween - reservationDayAmount);
+        int reservationDayAmount = random.nextInt( maximumDayToReserve ) + 1;
+        int seasonDuration = (int) ChronoUnit.DAYS.between(seasonStart, seasonEnd)+1;
+        long differenceOfSeasonStartAndReservationStartingDay = random.nextInt(-1, seasonDuration - reservationDayAmount)+1;
 
         LocalDate periodStartingDate = seasonStart.plusDays(differenceOfSeasonStartAndReservationStartingDay);
         periodStartingDate = manageMonthAndYearOverflow(seasonStart, periodStartingDate);
         LocalDate periodEndingDate = periodStartingDate.plusDays(reservationDayAmount);
         periodEndingDate = manageMonthAndYearOverflow(periodStartingDate, periodEndingDate);
+
         return new LocalDate[]{periodStartingDate, periodEndingDate};
     }
 
@@ -68,8 +69,8 @@ public class BreakfastGuestService implements GuestService {
 
 
     private int calculateMaximumDayToReserve(LocalDate minuendDate, LocalDate subtrahendDate) {
-        long daysBetween = ChronoUnit.DAYS.between(minuendDate, subtrahendDate);
-        return accommodationDayLimit > daysBetween ? (int) daysBetween : accommodationDayLimit;
+        long days = ChronoUnit.DAYS.between(minuendDate, subtrahendDate) + 1;
+        return accommodationDayLimit > days ? (int) days : accommodationDayLimit;
     }
 
     private GuestType generateRandomGuestType() {

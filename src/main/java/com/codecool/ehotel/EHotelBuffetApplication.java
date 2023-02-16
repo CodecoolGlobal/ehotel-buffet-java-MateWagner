@@ -29,11 +29,11 @@ public class EHotelBuffetApplication {
         LocalDate currentDay = SEASON_START;
         Set<Guest> x = new HashSet<>();
         while (currentDay.isBefore(SEASON_END)){
-            ArrayList<ArrayList<Guest>> dailyGuests = breakfastGuestService.getGuestsForDay(currentDay);
-            buffetService.serve(dailyGuests)
+            List<List<Guest>> dailyGuests = breakfastGuestService.getGuestsForDay(currentDay);
+            buffetService.serve(dailyGuests);
 
 
-            currentDay= currentDay.plusDays(1);
+            currentDay = currentDay.plusDays(1);
         }
 
 

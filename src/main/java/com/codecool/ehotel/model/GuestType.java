@@ -18,4 +18,5 @@ public enum GuestType {
     public List<MealType> getMealPreferences() {
         return mealPreferences;
     }
+
 }

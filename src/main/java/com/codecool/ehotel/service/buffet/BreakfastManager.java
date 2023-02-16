@@ -4,6 +4,7 @@ import com.codecool.ehotel.model.*;
 import com.codecool.ehotel.service.Statistic;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class BreakfastManager implements BuffetService {
     Buffet buffet;
@@ -64,14 +65,13 @@ public class BreakfastManager implements BuffetService {
         return costOfWastedMeals;
     }
 
-    private Optional<FoodItem> getFreshMeal(List<MealType> preference) {
-        Optional<FoodItem> freshMeal = Optional.empty();
-        int i = 0;
-        while (i < preference.size() && freshMeal.isEmpty()) {
-            freshMeal = buffet.getFreshestMeal(preference.get(i));
-            i++;
-        }
-        return freshMeal;
+
+    public Optional<FoodItem> getFreshMeal(List<MealType> preference) {
+        return preference.stream()
+                .map(buffet::getFreshestMeal)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .min(Comparator.comparingInt(FoodItem::getAgeCycle));
     }
 }
 

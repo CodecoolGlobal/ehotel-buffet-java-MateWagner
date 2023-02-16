@@ -1,6 +1,5 @@
 package com.codecool.ehotel.model;
 
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,8 +11,8 @@ public record Buffet(List<FoodItem> foodItems) {
     public void removeMany(List<FoodItem> foodItems) {
         this.foodItems.removeAll(foodItems);
     }
-    public void removeOne(FoodItem meal){
-        foodItems.remove(meal);
+    public void removeOne(FoodItem item){
+        foodItems.remove(item);
     }
     public Optional<FoodItem> getFreshestMeal(FoodType foodType){
         return foodItems.stream().filter(item -> item.getType().equals(foodType))
@@ -27,6 +26,7 @@ public record Buffet(List<FoodItem> foodItems) {
         return foodItems.stream().filter(FoodItem::isItemExpired).toList();
     }
 
-
-
+    public List<FoodItem> dalyCleanUp(){
+        return foodItems.stream().filter(FoodItem::isDalyWaste).toList();
+    }
 }

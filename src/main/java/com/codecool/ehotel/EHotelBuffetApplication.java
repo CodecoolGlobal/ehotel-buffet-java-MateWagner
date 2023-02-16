@@ -9,6 +9,7 @@ import com.codecool.ehotel.service.guest.BreakfastGuestService;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class EHotelBuffetApplication {
@@ -29,12 +30,14 @@ public class EHotelBuffetApplication {
         // Run breakfast buffet
         LocalDate currentDay = SEASON_START;
         Set<Guest> x = new HashSet<>();
-        while (currentDay.isBefore(SEASON_END)) {
+        while (currentDay.isBefore(SEASON_END)){
             List<List<Guest>> dailyGuests = breakfastGuestService.getOrderedGuestForDay(currentDay);
             buffetService.serve(dailyGuests);
 
             statistic.gatherStatistics(breakfastGuestService.numberOfGuestAtGivenDay(currentDay));
+            System.out.println("!!!!!!!!!!!!!!  " + statistic.getDailyGuestAmount() + "  "+ statistic.getDailyUnhappyGuestAmount() + "  "+statistic.getDailyWasteCost());
             statistic.displayStatistics(
+                    "Daily",
                     CURRENCY,
                     statistic.getDailyUnhappyGuestAmount(),
                     statistic.getDailyGuestAmount(),
@@ -43,6 +46,7 @@ public class EHotelBuffetApplication {
             currentDay = currentDay.plusDays(1);
         }
         statistic.displayStatistics(
+                "Seasonally",
                 CURRENCY,
                 statistic.getSeasonallyUnhappyGuestAmount(),
                 statistic.getSeasonalGuestAmount(),

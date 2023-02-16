@@ -12,9 +12,9 @@ public class Statistic {
     private int seasonallyWasteCost;
     private int seasonallyUnhappyGuestAmount;
 
-    public void collectUnHappyGuestAmount(List<Guest> guests){
+ /*   public void collectUnHappyGuestAmount(List<Guest> guests){
         setDailyUnhappyGuestAmount(guests.stream().filter(guest -> !guest.isHappy()).toList().size());
-    }
+    }*/
 
     public void collectCostOfWastedFoodPerCycle(int collectWaste){
          setDailyWasteCost(getDailyWasteCost() + collectWaste);
@@ -55,6 +55,17 @@ public class Statistic {
         this.dailyUnhappyGuestAmount = dailyUnhappyGuestAmount;
     }
 
+    public void collectUnHappyGuestAmount(List<List<Guest>> allGuestsPerDay) {
+        int dailyUnhappyGuests = 0;
+        for (List<Guest> guestList : allGuestsPerDay){
+            dailyUnhappyGuests += guestList.stream()
+                    .filter(guest -> !guest.isHappy())
+                    .toList()
+                    .size();
+        }
+       setDailyUnhappyGuestAmount(dailyUnhappyGuests);
+    }
+
     public void setSeasonallyWasteCost(int seasonallyWasteCost) {
         this.seasonallyWasteCost = seasonallyWasteCost;
     }
@@ -89,13 +100,11 @@ public class Statistic {
         increaseSeasonalWasteCost();
         increaseSeasonalGuestAmount();
     }
-public void displayStatistics(String CURRENCY, int unhappyGuestAmount, int totalGuestAmount, int wasteCost){
+public void displayStatistics(String period, String CURRENCY, int unhappyGuestAmount, int totalGuestAmount, int wasteCost){
 
-
-
-    double rate = (unhappyGuestAmount / totalGuestAmount) * 100;
-    System.out.printf("%30s : %-3f%1s", "Unhappy guest rate: ",rate , "%");
-    System.out.printf("%30s : %-20d%10s", "Daily waste cost: ", wasteCost, CURRENCY);
+    double rate = ((double) unhappyGuestAmount /(double) totalGuestAmount) * 100;
+    System.out.printf("\n%35s : %-3f%1s", period + " unhappy guest rate",rate , " %");
+    System.out.printf("\n%35s : %-8d%-10s", period + " waste cost", wasteCost, CURRENCY);
 }
 // SET DAILY GUEST AMOUNT
 }

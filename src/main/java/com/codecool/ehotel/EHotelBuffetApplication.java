@@ -1,9 +1,6 @@
 package com.codecool.ehotel;
 
-import com.codecool.ehotel.model.Buffet;
 import com.codecool.ehotel.model.Guest;
-import com.codecool.ehotel.service.buffet.BreakfastManager;
-import com.codecool.ehotel.service.buffet.BuffetService;
 import com.codecool.ehotel.service.guest.BreakfastGuestService;
 
 import java.time.LocalDate;

@@ -14,7 +14,7 @@ public class BreakfastManager implements BuffetService {
         refill(batch, buffet);
         //Try to feed the guests
         for (Guest guest : guests)
-            if (!consumeFreshest(guest.guestType().getMealPreferences()))
+            if (!consumeFreshest(guest.getGuestType().getMealPreferences()))
                 // TODO: Set guest happiness to unhappy
                 System.out.println("Guest is unhappy!");  // <- This is just a placeholder!!!
         //Returns the cost of all wasted meals
@@ -70,5 +70,3 @@ public class BreakfastManager implements BuffetService {
         return freshMeal;
     }
 }
-
-

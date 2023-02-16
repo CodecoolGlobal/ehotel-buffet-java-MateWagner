@@ -1,6 +1,8 @@
 package com.codecool.ehotel;
 
+import com.codecool.ehotel.model.Buffet;
 import com.codecool.ehotel.model.Guest;
+import com.codecool.ehotel.service.buffet.BreakfastManager;
 import com.codecool.ehotel.service.guest.BreakfastGuestService;
 
 import java.time.LocalDate;
@@ -26,10 +28,8 @@ public class EHotelBuffetApplication {
         LocalDate currentDay = SEASON_START;
         Set<Guest> x = new HashSet<>();
         while (currentDay.isBefore(SEASON_END)){
-            List<List<Guest>> dailyGuests = breakfastGuestService.getGuestsForDay(currentDay);
+            List<List<Guest>> dailyGuests = breakfastGuestService.getOrderedGuestForDay(currentDay);
             buffetService.serve(dailyGuests);
-
-
             currentDay = currentDay.plusDays(1);
         }
 

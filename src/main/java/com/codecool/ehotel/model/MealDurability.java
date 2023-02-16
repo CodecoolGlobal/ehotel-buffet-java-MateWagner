@@ -1,7 +1,7 @@
 package com.codecool.ehotel.model;
 
 public enum MealDurability {
-    SHORT(2),
+    SHORT(3),
     MEDIUM(8),
     LONG(0);
     private final int ageCycleLimit;

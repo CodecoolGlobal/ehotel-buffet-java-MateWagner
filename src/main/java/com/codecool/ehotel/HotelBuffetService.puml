@@ -99,6 +99,23 @@ interface FoodType << interface >> {
    durability: MealDurability
    cost: int
 }
+
+class Names << class >>{
+    - givenNames : String[]
+    - lastNames : String[]
+    + getRandomName() : String
+}
+
+GuestService --- Names
+Meal --- Buffet
+Meal --- MealType
+Buffet --- BreakfastManager
+EHotelBuffetApplication --- GuestService
+Guest --- GuestService
+MealType --- Guest
+MealDurability --- BuffetService
+BreakfastManager --- BreakfastStatistic
+
 entity Menu << Future >> implements FoodType {
 -durability : MealDurability
 -cost : int

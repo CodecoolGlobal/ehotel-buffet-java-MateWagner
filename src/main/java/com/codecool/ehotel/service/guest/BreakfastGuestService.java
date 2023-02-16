@@ -28,6 +28,16 @@ public class BreakfastGuestService implements GuestService {
 
     }
 
+    public ArrayList<ArrayList<Guest>> getOrderedGuestForDay(LocalDate date){
+        ArrayList<ArrayList<Guest>> guestsForDay = new ArrayList<>();
+        for (GuestsAtDay guests : guestsAtSeason){
+            if(guests.date().isEqual(date)){
+                guestsForDay = guests.guestsAtDay();
+            }
+        }
+        return guestsForDay;
+    }
+
     private ArrayList<GuestsAtDay> orderGuestsToDays(List<Guest> unOrderedGuests) {
         int numberOfDays = calculateNumberOfDaysBetweenDates(seasonStart, seasonEnd);
         LocalDate date  = seasonStart;

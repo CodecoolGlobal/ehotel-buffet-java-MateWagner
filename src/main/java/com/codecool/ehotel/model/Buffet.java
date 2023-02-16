@@ -29,4 +29,7 @@ public record Buffet(List<FoodItem> foodItems) {
     public List<FoodItem> dalyCleanUp(){
         return foodItems.stream().filter(FoodItem::isDalyWaste).toList();
     }
+    public int foodItemCount(FoodType foodType){
+        return (int) foodItems.stream().filter(item -> item.getType().equals(foodType)).count();
+    }
 }

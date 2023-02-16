@@ -6,22 +6,32 @@ import java.util.*;
 
 public class BreakfastManager implements BuffetService {
     Buffet buffet;
-    Map<FoodItem, Integer> batch;
+    Map<FoodType, Integer> batch;
 
-   // int cycle = 0;
-    public void serve(List<Guest> guests) {
-        //Refill the buffet
-        refill(batch, buffet);
-        //Try to feed the guests
-        for (Guest guest : guests)
-            if (!consumeFreshest(guest.guestType().getMealPreferences()))
-                // TODO: Set guest happiness to unhappy
-                System.out.println("Guest is unhappy!");  // <- This is just a placeholder!!!
-        //Returns the cost of all wasted meals
-        //TODO: add the cost to the statistics
-        collectWaste(buffet.expiredMeals());
+    public void serve(List<List<Guest>> guestsCycles) {
+        int maximumGuestNumber = guestsCycles.stream().mapToInt(List::size).sum();
+        int minAvailablePotion = (int) (maximumGuestNumber * 0.5);
 
-        buffet.increaseAgePairItem();
+        // serving over the 8 cycle
+        for (List<Guest> guests : guestsCycles) {
+            //Refill the buffet
+            createDummyBatches(minAvailablePotion);
+            refill();
+
+            //Try to feed the guests
+            for (Guest guest : guests) {
+                if (!consumeFreshest(guest.getGuestType().getMealPreferences()))
+                    // TODO: Set guest happiness to unhappy
+                    System.out.println("Guest is unhappy!");  // <- This is just a placeholder!!!
+            }
+
+            //Returns the cost of all wasted meals
+            //TODO: add the cost to the statistics
+            collectWaste(buffet.expiredMeals());
+
+            buffet.increaseAgePairItem();
+        }
+            collectWaste(buffet.dalyCleanUp());
     }
 
     public BreakfastManager(Buffet buffet) {
@@ -29,19 +39,19 @@ public class BreakfastManager implements BuffetService {
         this.batch = new HashMap<>();
     }
 
-    public void refill(Map<FoodItem, Integer> batch, Buffet buffet) {
+    public void refill() {
         List<FoodItem> newFoods = new ArrayList<>();
-        for (Map.Entry<FoodItem, Integer> entry : batch.entrySet()) {
+        for (Map.Entry<FoodType, Integer> entry : batch.entrySet()) {
             for (int i = 0; i < entry.getValue(); i++)
-                newFoods.add(entry.getKey());
+                newFoods.add(new FoodItem(entry.getKey()));
         }
         buffet.addMany(newFoods);
         batch.clear();
     }
 
     @Override
-    public void createBatch(MealType mealType, int portion, int timeStamp) {
-        batch.put(new FoodItem(0, mealType), portion);
+    public void createBatch(MealType mealType, int portion) {
+        batch.put(mealType, portion);
     }
 
     @Override
@@ -68,6 +78,11 @@ public class BreakfastManager implements BuffetService {
             i++;
         }
         return freshMeal;
+    }
+    private void createDummyBatches(int minAvailablePotion  ){
+        for (MealType mealType : MealType.values()) {
+           createBatch(mealType, minAvailablePotion - buffet.foodItemCount(mealType));
+        }
     }
 }
 

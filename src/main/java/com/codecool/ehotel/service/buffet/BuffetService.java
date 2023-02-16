@@ -9,9 +9,9 @@ import java.util.Map;
 
 public interface BuffetService {
 
-     void createBatch(MealType mealType, int portion, int timeStamp);
+     void createBatch(MealType mealType, int portion);
 
-     void refill(Map<FoodItem, Integer> batch, Buffet buffet);
+     void refill();
 
      boolean consumeFreshest(List<MealType> preference);
 

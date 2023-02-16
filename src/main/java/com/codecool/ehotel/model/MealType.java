@@ -2,7 +2,7 @@ package com.codecool.ehotel.model;
 
 import static com.codecool.ehotel.model.MealDurability.*;
 
-public enum MealType {
+public enum MealType implements FoodType {
     SCRAMBLED_EGGS (70, SHORT),
     SUNNY_SIDE_UP (70, SHORT),
     FRIED_SAUSAGE(100, SHORT),
@@ -22,11 +22,11 @@ public enum MealType {
         this.cost = cost;
         this.mealDurability = mealDurability;
     }
-
+@Override
     public int getCost() {
         return cost;
     }
-
+@Override
     public MealDurability getDurability() {
         return mealDurability;
     }

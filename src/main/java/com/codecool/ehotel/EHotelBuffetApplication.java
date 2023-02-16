@@ -26,7 +26,6 @@ public class EHotelBuffetApplication {
 
         // Run breakfast buffet
         LocalDate currentDay = SEASON_START;
-        Set<Guest> x = new HashSet<>();
         while (currentDay.isBefore(SEASON_END)){
             List<List<Guest>> dailyGuests = breakfastGuestService.getOrderedGuestForDay(currentDay);
             buffetService.serve(dailyGuests);

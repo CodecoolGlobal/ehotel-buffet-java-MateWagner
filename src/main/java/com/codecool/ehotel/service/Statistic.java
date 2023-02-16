@@ -101,13 +101,24 @@ public class Statistic {
         increaseSeasonalGuestAmount();
     }
 
-    public void displayStatistics(LocalDate date, String period, String CURRENCY, int unhappyGuestAmount, int totalGuestAmount, int wasteCost) {
+    public void displayDailyStatistics(LocalDate date, String CURRENCY) {
         DecimalFormat df = new DecimalFormat("#.##");
-        double rate = ((double) unhappyGuestAmount / (double) totalGuestAmount) * 100;
+        double rate = ((double) dailyUnhappyGuestAmount / (double) dailyGuestAmount) * 100;
 
         System.out.println("------------------------------------------------");
         System.out.println("Date : " + date);
-        System.out.printf("%-30s : %-6s%-1s", period + " unhappy guest rate", df.format(rate), " %");
-        System.out.printf("\n%-30s : %-6d %-6s\n", period + " waste cost", wasteCost, CURRENCY);
+        System.out.printf("%-30s : %6s%-1s", "Daily unhappy guest rate", df.format(rate), " %");
+        System.out.printf("\n%-30s : %6d %-6s\n", "Daily waste cost", dailyWasteCost, CURRENCY);
+    }
+
+    public void displaySeasonalStatistics(String CURRENCY) {
+        DecimalFormat df = new DecimalFormat("#.##");
+        double rate = ((double) seasonallyUnhappyGuestAmount / (double) seasonalGuestAmount) * 100;
+
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        System.out.println("|            End of the season!!!              |");
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        System.out.printf("%-30s : %6s%-1s",  "Seasonally unhappy guest rate", df.format(rate), " %");
+        System.out.printf("\n%-30s : %6d %-6s\n", "Seasonally waste cost", seasonallyWasteCost, CURRENCY);
     }
 }

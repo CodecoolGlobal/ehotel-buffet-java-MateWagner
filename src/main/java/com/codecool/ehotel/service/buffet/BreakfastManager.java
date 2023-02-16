@@ -17,21 +17,29 @@ public class BreakfastManager implements BuffetService {
         this.batch = new HashMap<>();
     }
 
-    public void serve(List<List<Guest>> guests) {
-        int maximumGuestNumber = guests.stream().mapToInt(ArrayList::size).sum();
-        int minimumBatchSizes = (int) (maximumGuestNumber * 0.5);
-        //Refill the buffet
-        refill();
-        //Try to feed the guests
-        for (Guest guest : guests)
-            if (!consumeFreshest(guest.getGuestType().getMealPreferences()))
-                // TODO: Set guest happiness to unhappy
-                System.out.println("Guest is unhappy!");  // <- This is just a placeholder!!!        //Check the guests list's guest happiness and collect the amount of unhappy ones
-        statistic.collectUnHappyGuestAmount(guests);
-        //Store in the statistic the cost of all wasted meals
-        statistic.collectCostOfWastedFoodPerCycle(collectWaste(buffet.expiredMeals()));
+    public void serve(List<List<Guest>> guestsCycles) {
+        int maximumGuestNumber = guestsCycles.stream().mapToInt(List::size).sum();
+        int minAvailablePotion = (int) (maximumGuestNumber * 0.5);
 
-        buffet.increaseAgePairItem();
+        // serving over the 8 cycle
+        for (List<Guest> guests : guestsCycles) {
+            //Refill the buffet
+            createDummyBatches(minAvailablePotion);
+            refill();
+
+            //Try to feed the guests
+            for (Guest guest : guests) {
+                if (!consumeFreshest(guest.getGuestType().getMealPreferences()))
+                    // TODO: Set guest happiness to unhappy
+                    System.out.println("Guest is unhappy!");  // <- This is just a placeholder!!!
+            }
+
+            //Returns the cost of all wasted meals
+            //TODO: add the cost to the statistics
+            collectWaste(buffet.expiredMeals());
+
+            buffet.increaseAgePairItem();
+        }
     }
 
     public void refill() {
@@ -74,12 +82,9 @@ public class BreakfastManager implements BuffetService {
                 .map(Optional::get)
                 .min(Comparator.comparingInt(FoodItem::getAgeCycle));
     }
-    private void createDummyBatches(){
-        int minAvailablePotion = 10; //todo Need to move upper
+    private void createDummyBatches(int minAvailablePotion  ){
         for (MealType mealType : MealType.values()) {
            createBatch(mealType, minAvailablePotion - buffet.foodItemCount(mealType));
         }
     }
 }
-
-

@@ -3,18 +3,18 @@ package com.codecool.ehotel.service.buffet;
 import com.codecool.ehotel.model.*;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class BreakfastManager implements BuffetService {
     Buffet buffet;
     Map<FoodItem, Integer> batch;
 
-   // int cycle = 0;
     public void serve(List<Guest> guests) {
         //Refill the buffet
         refill(batch, buffet);
         //Try to feed the guests
         for (Guest guest : guests)
-            if (!consumeFreshest(guest.guestType().getMealPreferences()))
+            if (!consumeFreshest(guest.getGuestType().getMealPreferences()))
                 // TODO: Set guest happiness to unhappy
                 System.out.println("Guest is unhappy!");  // <- This is just a placeholder!!!
         //Returns the cost of all wasted meals
@@ -60,15 +60,15 @@ public class BreakfastManager implements BuffetService {
         return costOfWastedMeals;
     }
 
-    private Optional<FoodItem> getFreshMeal(List<MealType> preference) {
-        Optional<FoodItem> freshMeal = Optional.empty();
-        int i = 0;
-        while (i < preference.size() && freshMeal.isEmpty()) {
-            freshMeal = buffet.getFreshestMeal(preference.get(i));
-            i++;
-        }
-        return freshMeal;
+
+    public Optional<FoodItem> getFreshMeal(List<MealType> preference) {
+        return preference.stream()
+                .map(buffet::getFreshestMeal)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .min(Comparator.comparingInt(FoodItem::getAgeCycle));
     }
+
 }
 
 

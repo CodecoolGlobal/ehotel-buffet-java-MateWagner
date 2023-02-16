@@ -27,6 +27,14 @@ public class BreakfastGuestService implements GuestService {
         guestsAtSeason = orderGuestsToDays(unOrderedGuests);
 
     }
+    public int numberOfGuestAtGivenDay(LocalDate date){
+        List<List<Guest>> guestsAtDay = getOrderedGuestForDay(date);
+        int sum = 0;
+        for(List<Guest> guestsAtBatch : guestsAtDay){
+            sum+=guestsAtBatch.size();
+        }
+        return sum;
+    }
 
     public List<List<Guest>> getOrderedGuestForDay(LocalDate date){
         List<List<Guest>> guestsForDay = new ArrayList<>();

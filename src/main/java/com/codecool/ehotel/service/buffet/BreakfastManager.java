@@ -32,14 +32,10 @@ public class BreakfastManager implements BuffetService {
             refill();
 
             //Try to feed the guests
-            for (Guest guest : guests) {
-
-
+            for (Guest guest : guests)
                     guest.setIsHappiness(consumeFreshest(guest.getGuestType().getMealPreferences()));
-            }
 
             //Returns the cost of all wasted meals
-            //TODO: add the cost to the statistics
             statistic.collectCostOfWastedFoodPerCycle(collectWaste(buffet.expiredMeals()));
 
             buffet.increaseAgePairItem();
@@ -79,8 +75,7 @@ public class BreakfastManager implements BuffetService {
         buffet.removeMany(expiredMeals);
         return costOfWastedMeals;
     }
-
-
+    
     public Optional<FoodItem> getFreshMeal(List<MealType> preference) {
         return preference.stream()
                 .map(buffet::getFreshestMeal)

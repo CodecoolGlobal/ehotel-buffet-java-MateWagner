@@ -2,6 +2,8 @@ package com.codecool.ehotel.service;
 
 import com.codecool.ehotel.model.Guest;
 
+import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.util.List;
 
 public class Statistic {
@@ -100,11 +102,14 @@ public class Statistic {
         increaseSeasonalWasteCost();
         increaseSeasonalGuestAmount();
     }
-public void displayStatistics(String period, String CURRENCY, int unhappyGuestAmount, int totalGuestAmount, int wasteCost){
-
+public void displayStatistics(LocalDate date, String period, String CURRENCY, int unhappyGuestAmount, int totalGuestAmount, int wasteCost){
+    DecimalFormat df = new DecimalFormat("#.##");
     double rate = ((double) unhappyGuestAmount /(double) totalGuestAmount) * 100;
-    System.out.printf("\n%35s : %-3f%1s", period + " unhappy guest rate",rate , " %");
-    System.out.printf("\n%35s : %-8d%-10s", period + " waste cost", wasteCost, CURRENCY);
+
+    System.out.println("------------------------------------------------");
+    System.out.println("Date : " + date);
+    System.out.printf("%-30s : %-6s%-1s", period + " unhappy guest rate",df.format(rate) , " %");
+    System.out.printf("\n%-30s : %-6d %-6s\n", period + " waste cost", wasteCost, CURRENCY);
 }
 // SET DAILY GUEST AMOUNT
 }

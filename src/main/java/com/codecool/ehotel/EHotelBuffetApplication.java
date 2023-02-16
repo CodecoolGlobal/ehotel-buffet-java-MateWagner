@@ -35,8 +35,9 @@ public class EHotelBuffetApplication {
             buffetService.serve(dailyGuests);
 
             statistic.gatherStatistics(breakfastGuestService.numberOfGuestAtGivenDay(currentDay));
-            System.out.println("!!!!!!!!!!!!!!  " + statistic.getDailyGuestAmount() + "  "+ statistic.getDailyUnhappyGuestAmount() + "  "+statistic.getDailyWasteCost());
+           // System.out.println("!!!!!!!!!!!!!!  " + statistic.getDailyGuestAmount() + "  "+ statistic.getDailyUnhappyGuestAmount() + "  "+statistic.getDailyWasteCost());
             statistic.displayStatistics(
+                    currentDay,
                     "Daily",
                     CURRENCY,
                     statistic.getDailyUnhappyGuestAmount(),
@@ -46,6 +47,7 @@ public class EHotelBuffetApplication {
             currentDay = currentDay.plusDays(1);
         }
         statistic.displayStatistics(
+                currentDay,
                 "Seasonally",
                 CURRENCY,
                 statistic.getSeasonallyUnhappyGuestAmount(),

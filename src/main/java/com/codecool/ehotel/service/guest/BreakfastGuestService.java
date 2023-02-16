@@ -121,6 +121,7 @@ public class BreakfastGuestService implements GuestService {
 
 
     private LocalDate[] generateRandomReservationPeriodBetweenDates(int maximumDayToReserve, LocalDate seasonStart, LocalDate seasonEnd) {
+        Random random = new Random();
         if (maximumDayToReserve == 1) {
             return new LocalDate[]{seasonStart, seasonEnd};
         }
@@ -145,6 +146,7 @@ public class BreakfastGuestService implements GuestService {
     }
 
     private GuestType generateRandomGuestType() {
+        Random random = new Random();
         GuestType[] guestTypes = GuestType.values();
         return guestTypes[random.nextInt(guestTypes.length)];
     }

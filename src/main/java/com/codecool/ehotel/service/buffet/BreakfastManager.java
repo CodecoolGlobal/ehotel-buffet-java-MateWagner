@@ -6,7 +6,7 @@ import java.util.*;
 
 public class BreakfastManager implements BuffetService {
     Buffet buffet;
-    Map<FoodItem, Integer> batch;
+    Map<FoodType, Integer> batch;
 
     public void serve(List<List<Guest>> guestsCycles) {
         int maximumGuestNumber = guestsCycles.stream().mapToInt(List::size).sum();
@@ -32,6 +32,7 @@ public class BreakfastManager implements BuffetService {
 
             buffet.increaseAgePairItem();
         }
+            collectWaste(buffet.dalyCleanUp());
     }
 
     public BreakfastManager(Buffet buffet) {
@@ -41,9 +42,9 @@ public class BreakfastManager implements BuffetService {
 
     public void refill() {
         List<FoodItem> newFoods = new ArrayList<>();
-        for (Map.Entry<FoodItem, Integer> entry : batch.entrySet()) {
+        for (Map.Entry<FoodType, Integer> entry : batch.entrySet()) {
             for (int i = 0; i < entry.getValue(); i++)
-                newFoods.add(entry.getKey());
+                newFoods.add(new FoodItem(entry.getKey()));
         }
         buffet.addMany(newFoods);
         batch.clear();
@@ -51,7 +52,7 @@ public class BreakfastManager implements BuffetService {
 
     @Override
     public void createBatch(MealType mealType, int portion) {
-        batch.put(new FoodItem(0, mealType), portion);
+        batch.put(mealType, portion);
     }
 
     @Override

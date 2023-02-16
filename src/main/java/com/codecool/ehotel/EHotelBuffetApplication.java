@@ -3,7 +3,6 @@ package com.codecool.ehotel;
 import com.codecool.ehotel.model.Buffet;
 import com.codecool.ehotel.model.Guest;
 import com.codecool.ehotel.service.buffet.BreakfastManager;
-import com.codecool.ehotel.service.buffet.BuffetService;
 import com.codecool.ehotel.service.guest.BreakfastGuestService;
 
 import java.time.LocalDate;
@@ -11,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.List;
 
 public class EHotelBuffetApplication {
 
@@ -32,8 +30,6 @@ public class EHotelBuffetApplication {
         while (currentDay.isBefore(SEASON_END)){
             List<List<Guest>> dailyGuests = breakfastGuestService.getOrderedGuestForDay(currentDay);
             buffetService.serve(dailyGuests);
-
-
             currentDay = currentDay.plusDays(1);
         }
 

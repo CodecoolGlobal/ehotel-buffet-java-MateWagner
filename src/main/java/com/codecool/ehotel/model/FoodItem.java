@@ -26,7 +26,7 @@ public class FoodItem {
     }
 
     public boolean isItemExpired(){
-        return  this.ageCycle >= this.type.getDurability().getAgeCycleLimit() && this.ageCycle != 0;
+        return  this.ageCycle >= this.type.getDurability().getAgeCycleLimit() && this.type.getDurability().getAgeCycleLimit() != 0;
     }
     public boolean isDalyWaste(){
         return  this.type.getDurability() == MealDurability.SHORT || this.type.getDurability() == MealDurability.MEDIUM;

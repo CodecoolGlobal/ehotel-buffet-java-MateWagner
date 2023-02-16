@@ -14,7 +14,7 @@ public class BreakfastGuestService implements GuestService {
     private final LocalDate seasonStart;
     private final LocalDate seasonEnd;
     private final int batchCycleAmount;
-    private final ArrayList<GuestsAtDay> guestsAtSeason;
+    private final List<GuestsAtDay> guestsAtSeason;
     private final Random random = new Random();
 
     public BreakfastGuestService(LocalDate seasonStart, LocalDate seasonEnd, int numberOfGuests, int accommodationDayLimit, int batchCycleAmount) {
@@ -28,8 +28,8 @@ public class BreakfastGuestService implements GuestService {
 
     }
 
-    public ArrayList<ArrayList<Guest>> getOrderedGuestForDay(LocalDate date){
-        ArrayList<ArrayList<Guest>> guestsForDay = new ArrayList<>();
+    public List<List<Guest>> getOrderedGuestForDay(LocalDate date){
+        List<List<Guest>> guestsForDay = new ArrayList<>();
         for (GuestsAtDay guests : guestsAtSeason){
             if(guests.date().isEqual(date)){
                 guestsForDay = guests.guestsAtDay();
@@ -38,12 +38,12 @@ public class BreakfastGuestService implements GuestService {
         return guestsForDay;
     }
 
-    private ArrayList<GuestsAtDay> orderGuestsToDays(List<Guest> unOrderedGuests) {
+    private List<GuestsAtDay> orderGuestsToDays(List<Guest> unOrderedGuests) {
         int numberOfDays = calculateNumberOfDaysBetweenDates(seasonStart, seasonEnd);
         LocalDate date  = seasonStart;
-        ArrayList<GuestsAtDay> guestsAtSeason = new ArrayList<>();
+        List<GuestsAtDay> guestsAtSeason = new ArrayList<>();
         for (int i = 0; i < numberOfDays; i++) {
-            ArrayList<ArrayList<Guest>> guestAtDay = orderGuestsToBatches(getGuestsForDay(unOrderedGuests,date));
+            List<List<Guest>> guestAtDay = orderGuestsToBatches(getGuestsForDay(unOrderedGuests,date));
 
             GuestsAtDay guestsAndDay = new GuestsAtDay(date,guestAtDay);
             guestsAtSeason.add(guestsAndDay);
@@ -52,12 +52,12 @@ public class BreakfastGuestService implements GuestService {
         return guestsAtSeason;
     }
 
-    private ArrayList<ArrayList<Guest>> orderGuestsToBatches(Set<Guest> guestsForDay) {
-        ArrayList<ArrayList<Guest>> guestsAtBatches = new ArrayList<>();
-        ArrayList<Map<Integer,Guest>> guestsWithRandomBatchCycleIndex = generateRandomBatchIndexToGuests(guestsForDay);
+    private List<List<Guest>> orderGuestsToBatches(Set<Guest> guestsForDay) {
+        List<List<Guest>> guestsAtBatches = new ArrayList<>();
+        List<Map<Integer,Guest>> guestsWithRandomBatchCycleIndex = generateRandomBatchIndexToGuests(guestsForDay);
 
         for(int i = 0; i< batchCycleAmount;i++){
-            ArrayList<Guest> guestsAtBatch = new ArrayList<>();
+            List<Guest> guestsAtBatch = new ArrayList<>();
 
             for (Map<Integer,Guest> guestWithBatchIndex: guestsWithRandomBatchCycleIndex){
                 if(guestWithBatchIndex.containsKey(i)){
@@ -71,8 +71,8 @@ public class BreakfastGuestService implements GuestService {
         return guestsAtBatches;
     }
 
-    private ArrayList<Map<Integer, Guest>> generateRandomBatchIndexToGuests(Set<Guest> guests) {
-        ArrayList<Map<Integer,Guest>> guestsWithIndex = new ArrayList<>();
+    private List<Map<Integer, Guest>> generateRandomBatchIndexToGuests(Set<Guest> guests) {
+        List<Map<Integer,Guest>> guestsWithIndex = new ArrayList<>();
         for (Guest guest:guests) {
             Map<Integer,Guest> guestWithIndex = new HashMap<>();
             guestWithIndex.put(random.nextInt(batchCycleAmount),guest);

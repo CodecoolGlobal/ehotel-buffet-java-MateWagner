@@ -15,7 +15,8 @@ public class BreakfastManager implements BuffetService {
         // serving over the 8 cycle
         for (List<Guest> guests : guestsCycles) {
             //Refill the buffet
-            createDummyBatches(minAvailablePotion);
+            //createDummyBatches(minAvailablePotion);
+            createOptimalBatches(guestsCycles);
             refill();
 
             //Try to feed the guests
@@ -78,9 +79,20 @@ public class BreakfastManager implements BuffetService {
         }
         return freshMeal;
     }
-    private void createDummyBatches(int minAvailablePotion  ){
+
+    private void createDummyBatches(int minAvailablePotion) {
         for (MealType mealType : MealType.values()) {
-           createBatch(mealType, minAvailablePotion - buffet.foodItemCount(mealType));
+            createBatch(mealType, minAvailablePotion - buffet.foodItemCount(mealType));
+        }
+    }
+
+    private void createOptimalBatches(List<List<Guest>> guestsAtDay) {
+        Random random = new Random();
+        for (List<Guest> guestsAtCycle : guestsAtDay) {
+            for (Guest guest : guestsAtCycle) {
+                List<MealType> mealPreferences = guest.getGuestType().getMealPreferences();
+                createBatch(mealPreferences.get(random.nextInt(mealPreferences.size())), 1);
+            }
         }
     }
 }

@@ -14,17 +14,15 @@ public class Statistic {
     private int seasonallyWasteCost;
     private int seasonallyUnhappyGuestAmount;
 
- /*   public void collectUnHappyGuestAmount(List<Guest> guests){
-        setDailyUnhappyGuestAmount(guests.stream().filter(guest -> !guest.isHappy()).toList().size());
-    }*/
-
-    public void collectCostOfWastedFoodPerCycle(int collectWaste){
-         setDailyWasteCost(getDailyWasteCost() + collectWaste);
+    public void collectCostOfWastedFoodPerCycle(int collectWaste) {
+        setDailyWasteCost(getDailyWasteCost() + collectWaste);
     }
-    public void clearDailyStatistics(){
+
+    public void clearDailyStatistics() {
         setDailyWasteCost(0);
         setDailyUnhappyGuestAmount(0);
     }
+
     public int getDailyWasteCost() {
         return dailyWasteCost;
     }
@@ -59,20 +57,18 @@ public class Statistic {
 
     public void collectUnHappyGuestAmount(List<List<Guest>> allGuestsPerDay) {
         int dailyUnhappyGuests = 0;
-        for (List<Guest> guestList : allGuestsPerDay){
+        for (List<Guest> guestList : allGuestsPerDay) {
             dailyUnhappyGuests += guestList.stream()
                     .filter(guest -> !guest.isHappy())
                     .toList()
                     .size();
         }
-       setDailyUnhappyGuestAmount(dailyUnhappyGuests);
+        setDailyUnhappyGuestAmount(dailyUnhappyGuests);
     }
 
     public void setSeasonallyWasteCost(int seasonallyWasteCost) {
         this.seasonallyWasteCost = seasonallyWasteCost;
     }
-
-
 
     public void setDailyGuestAmount(int dailyGuestAmount) {
         this.dailyGuestAmount = dailyGuestAmount;
@@ -86,30 +82,32 @@ public class Statistic {
         this.seasonallyUnhappyGuestAmount = seasonallyUnhappyGuestAmount;
     }
 
-    private void increaseSeasonalGuestAmount(){
+    private void increaseSeasonalGuestAmount() {
         setSeasonalGuestAmount(seasonalGuestAmount + dailyGuestAmount);
     }
-    private void increaseSeasonalWasteCost(){
+
+    private void increaseSeasonalWasteCost() {
         setSeasonallyWasteCost(seasonallyWasteCost + dailyWasteCost);
     }
-    private void increaseSeasonalUnhappyGuests(){
+
+    private void increaseSeasonalUnhappyGuests() {
         setSeasonallyUnhappyGuestAmount(seasonallyUnhappyGuestAmount + dailyUnhappyGuestAmount);
     }
 
-    public void gatherStatistics(int dailyGuests){
+    public void gatherStatistics(int dailyGuests) {
         setDailyGuestAmount(dailyGuests);
         increaseSeasonalUnhappyGuests();
         increaseSeasonalWasteCost();
         increaseSeasonalGuestAmount();
     }
-public void displayStatistics(LocalDate date, String period, String CURRENCY, int unhappyGuestAmount, int totalGuestAmount, int wasteCost){
-    DecimalFormat df = new DecimalFormat("#.##");
-    double rate = ((double) unhappyGuestAmount /(double) totalGuestAmount) * 100;
 
-    System.out.println("------------------------------------------------");
-    System.out.println("Date : " + date);
-    System.out.printf("%-30s : %-6s%-1s", period + " unhappy guest rate",df.format(rate) , " %");
-    System.out.printf("\n%-30s : %-6d %-6s\n", period + " waste cost", wasteCost, CURRENCY);
-}
-// SET DAILY GUEST AMOUNT
+    public void displayStatistics(LocalDate date, String period, String CURRENCY, int unhappyGuestAmount, int totalGuestAmount, int wasteCost) {
+        DecimalFormat df = new DecimalFormat("#.##");
+        double rate = ((double) unhappyGuestAmount / (double) totalGuestAmount) * 100;
+
+        System.out.println("------------------------------------------------");
+        System.out.println("Date : " + date);
+        System.out.printf("%-30s : %-6s%-1s", period + " unhappy guest rate", df.format(rate), " %");
+        System.out.printf("\n%-30s : %-6d %-6s\n", period + " waste cost", wasteCost, CURRENCY);
+    }
 }

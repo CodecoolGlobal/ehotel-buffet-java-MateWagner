@@ -44,7 +44,6 @@ public class BreakfastManager implements BuffetService {
             statistic.collectCostOfWastedFoodPerCycle(collectWaste(buffet.dalyCleanUp()));
     }
 
-
     public void refill() {
         List<FoodItem> newFoods = new ArrayList<>();
         for (Map.Entry<FoodType, Integer> entry : batch.entrySet()) {
@@ -75,7 +74,7 @@ public class BreakfastManager implements BuffetService {
         buffet.removeMany(expiredMeals);
         return costOfWastedMeals;
     }
-    
+
     public Optional<FoodItem> getFreshMeal(List<MealType> preference) {
         return preference.stream()
                 .map(buffet::getFreshestMeal)

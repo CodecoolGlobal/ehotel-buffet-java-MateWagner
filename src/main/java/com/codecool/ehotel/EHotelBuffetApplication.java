@@ -2,6 +2,7 @@ package com.codecool.ehotel;
 
 import com.codecool.ehotel.model.Buffet;
 import com.codecool.ehotel.model.Guest;
+import com.codecool.ehotel.service.Statistic;
 import com.codecool.ehotel.service.buffet.BreakfastManager;
 import com.codecool.ehotel.service.guest.BreakfastGuestService;
 
@@ -16,10 +17,12 @@ public class EHotelBuffetApplication {
     public static void main(String[] args) {
         LocalDate SEASON_START = LocalDate.parse("2000-01-01");
         LocalDate SEASON_END = LocalDate.parse("2000-02-01");
+        String CURRENCY = "Coins";
 
         // Initialize services
         Buffet buffet = new Buffet(new ArrayList<>());
-        BreakfastManager buffetService = new BreakfastManager(buffet);
+        Statistic statistic = new Statistic();
+        BreakfastManager buffetService = new BreakfastManager(buffet, statistic);
 
         // Generate guests for the season
         BreakfastGuestService breakfastGuestService = new BreakfastGuestService(SEASON_START, SEASON_END, 500, 7, 8);
@@ -30,9 +33,24 @@ public class EHotelBuffetApplication {
         while (currentDay.isBefore(SEASON_END)){
             List<List<Guest>> dailyGuests = breakfastGuestService.getOrderedGuestForDay(currentDay);
             buffetService.serve(dailyGuests);
+
+            statistic.gatherStatistics(breakfastGuestService.numberOfGuestAtGivenDay(currentDay));
+            System.out.println("!!!!!!!!!!!!!!  " + statistic.getDailyGuestAmount() + "  "+ statistic.getDailyUnhappyGuestAmount() + "  "+statistic.getDailyWasteCost());
+            statistic.displayStatistics(
+                    "Daily",
+                    CURRENCY,
+                    statistic.getDailyUnhappyGuestAmount(),
+                    statistic.getDailyGuestAmount(),
+                    statistic.getDailyWasteCost());
+            statistic.clearDailyStatistics();
             currentDay = currentDay.plusDays(1);
         }
-
+        statistic.displayStatistics(
+                "Seasonally",
+                CURRENCY,
+                statistic.getSeasonallyUnhappyGuestAmount(),
+                statistic.getSeasonalGuestAmount(),
+                statistic.getSeasonallyWasteCost());
 
     }
 }

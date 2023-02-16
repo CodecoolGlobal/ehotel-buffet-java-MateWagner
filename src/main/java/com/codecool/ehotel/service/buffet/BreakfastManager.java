@@ -1,16 +1,28 @@
 package com.codecool.ehotel.service.buffet;
 
 import com.codecool.ehotel.model.*;
+import com.codecool.ehotel.service.Statistic;
 
 import java.util.*;
 
 public class BreakfastManager implements BuffetService {
     Buffet buffet;
+    Statistic statistic;
     Map<FoodType, Integer> batch;
+
+    public BreakfastManager(Buffet buffet, Statistic statistic) {
+        this.buffet = buffet;
+        this.statistic = statistic;
+        this.batch = new HashMap<>();
+    }
+
+    public BreakfastManager(Buffet buffet) {
+        this.buffet = buffet;
+    }
 
     public void serve(List<List<Guest>> guestsCycles) {
         int maximumGuestNumber = guestsCycles.stream().mapToInt(List::size).sum();
-        int minAvailablePotion = (int) (maximumGuestNumber * 0.5);
+        int minAvailablePotion = (int) (maximumGuestNumber * 0.03);
 
         // serving over the 8 cycle
         for (List<Guest> guests : guestsCycles) {
@@ -21,24 +33,21 @@ public class BreakfastManager implements BuffetService {
 
             //Try to feed the guests
             for (Guest guest : guests) {
-                if (!consumeFreshest(guest.getGuestType().getMealPreferences()))
-                    // TODO: Set guest happiness to unhappy
-                    System.out.println("Guest is unhappy!");  // <- This is just a placeholder!!!
+
+
+                    guest.setIsHappiness(consumeFreshest(guest.getGuestType().getMealPreferences()));
             }
 
             //Returns the cost of all wasted meals
             //TODO: add the cost to the statistics
-            collectWaste(buffet.expiredMeals());
+            statistic.collectCostOfWastedFoodPerCycle(collectWaste(buffet.expiredMeals()));
 
             buffet.increaseAgePairItem();
         }
-            collectWaste(buffet.dalyCleanUp());
+        statistic.collectUnHappyGuestAmount(guestsCycles);
+            statistic.collectCostOfWastedFoodPerCycle(collectWaste(buffet.dalyCleanUp()));
     }
 
-    public BreakfastManager(Buffet buffet) {
-        this.buffet = buffet;
-        this.batch = new HashMap<>();
-    }
 
     public void refill() {
         List<FoodItem> newFoods = new ArrayList<>();
@@ -71,14 +80,13 @@ public class BreakfastManager implements BuffetService {
         return costOfWastedMeals;
     }
 
-    private Optional<FoodItem> getFreshMeal(List<MealType> preference) {
-        Optional<FoodItem> freshMeal = Optional.empty();
-        int i = 0;
-        while (i < preference.size() && freshMeal.isEmpty()) {
-            freshMeal = buffet.getFreshestMeal(preference.get(i));
-            i++;
-        }
-        return freshMeal;
+
+    public Optional<FoodItem> getFreshMeal(List<MealType> preference) {
+        return preference.stream()
+                .map(buffet::getFreshestMeal)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .min(Comparator.comparingInt(FoodItem::getAgeCycle));
     }
 
     private void createDummyBatches(int minAvailablePotion) {

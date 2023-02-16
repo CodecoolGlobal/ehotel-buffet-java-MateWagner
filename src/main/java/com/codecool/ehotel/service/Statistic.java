@@ -34,4 +34,10 @@ public class Statistic {
     private void setDailyUnhappyGuestAmount(int dailyUnhappyGuestAmount) {
         this.dailyUnhappyGuestAmount = dailyUnhappyGuestAmount;
     }
+    public void displayDailyStatistics(String CURRENCY){
+        // TODO: replace unhappy guest amount with unhappy / all
+
+        System.out.printf("%30s : %-3d%1s", "Unhappy guest rate: ", getDailyUnhappyGuestAmount(), "%");
+        System.out.printf("%30s : %-20d%10s", "Daily waste cost: ", getDailyWasteCost(), CURRENCY);
+    }
 }

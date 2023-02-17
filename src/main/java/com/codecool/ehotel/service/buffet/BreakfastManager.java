@@ -23,19 +23,22 @@ public class BreakfastManager implements BuffetService {
 
     public void serve(List<List<Guest>> guestsCycles) {
         int maximumGuestNumber = guestsCycles.stream().mapToInt(List::size).sum();
-        int minAvailablePotion = (int) (maximumGuestNumber * 0.03);
+        int minAvailablePotion = (int) (maximumGuestNumber * 0.07);
 
         // serving over the 8 cycle
-        for (List<Guest> guests : guestsCycles) {
+        for (int i = 0; i< guestsCycles.size();i++) {
             //Refill the buffet
-            createDummyBatches(minAvailablePotion);
+            //createDummyBatches(minAvailablePotion);
+            getOptimalPortions(guestsCycles,i);
             refill();
 
             //Try to feed the guests
-            for (Guest guest : guests)
-                    guest.setIsHappiness(consumeFreshest(guest.getGuestType().getMealPreferences()));
+            for (Guest guest : guestsCycles.get(i)) {
+                guest.setIsHappiness(consumeFreshest(guest.getGuestType().getMealPreferences()));
+            }
 
             //Returns the cost of all wasted meals
+            //TODO: add the cost to the statistics
             statistic.collectCostOfWastedFoodPerCycle(collectWaste(buffet.expiredMeals()));
 
             buffet.increaseAgePairItem();
@@ -43,6 +46,7 @@ public class BreakfastManager implements BuffetService {
         statistic.collectUnHappyGuestAmount(guestsCycles);
             statistic.collectCostOfWastedFoodPerCycle(collectWaste(buffet.dalyCleanUp()));
     }
+
 
     public void refill() {
         List<FoodItem> newFoods = new ArrayList<>();
@@ -75,6 +79,7 @@ public class BreakfastManager implements BuffetService {
         return costOfWastedMeals;
     }
 
+
     public Optional<FoodItem> getFreshMeal(List<MealType> preference) {
         return preference.stream()
                 .map(buffet::getFreshestMeal)
@@ -85,6 +90,17 @@ public class BreakfastManager implements BuffetService {
     private void createDummyBatches(int minAvailablePotion  ){
         for (MealType mealType : MealType.values()) {
            createBatch(mealType, minAvailablePotion - buffet.foodItemCount(mealType));
+        }
+    }
+
+    private void getOptimalPortions(List<List<Guest>> guestsAtDay, int cycleIndex) {
+        Random random = new Random();
+
+        for (int i= cycleIndex;i<guestsAtDay.size();i++) {
+            for (Guest guest : guestsAtDay.get(i)) {
+                List<MealType> mealPreferences = guest.getGuestType().getMealPreferences();
+                createBatch(mealPreferences.get(random.nextInt(mealPreferences.size())), 1);
+            }
         }
     }
 }

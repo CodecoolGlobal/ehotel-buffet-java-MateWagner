@@ -13,15 +13,15 @@ public class BreakfastGuestService implements GuestService {
     private final int accommodationDayLimit;
     private final LocalDate seasonStart;
     private final LocalDate seasonEnd;
-    private final int batchCycleAmount;
+    private final int cycleAmount;
     private final List<GuestsAtDay> guestsAtSeason;
     private final Random random = new Random();
 
-    public BreakfastGuestService(LocalDate seasonStart, LocalDate seasonEnd, int numberOfGuests, int accommodationDayLimit, int batchCycleAmount) {
+    public BreakfastGuestService(LocalDate seasonStart, LocalDate seasonEnd, int numberOfGuests, int accommodationDayLimit, int cycleAmount) {
         this.seasonStart = seasonStart;
         this.seasonEnd = seasonEnd;
         this.accommodationDayLimit = accommodationDayLimit;
-        this.batchCycleAmount = batchCycleAmount;
+        this.cycleAmount = cycleAmount;
 
         List<Guest> unOrderedGuests = generateRandomGuests(numberOfGuests);
         guestsAtSeason = orderGuestsToDays(unOrderedGuests);
@@ -51,7 +51,7 @@ public class BreakfastGuestService implements GuestService {
         LocalDate date  = seasonStart;
         List<GuestsAtDay> guestsAtSeason = new ArrayList<>();
         for (int i = 0; i < numberOfDays; i++) {
-            List<List<Guest>> guestAtDay = orderGuestsToBatches(getGuestsForDay(unOrderedGuests,date));
+            List<List<Guest>> guestAtDay = orderGuestsToCycles(getGuestsForDay(unOrderedGuests,date));
 
             GuestsAtDay guestsAndDay = new GuestsAtDay(date,guestAtDay);
             guestsAtSeason.add(guestsAndDay);
@@ -60,30 +60,30 @@ public class BreakfastGuestService implements GuestService {
         return guestsAtSeason;
     }
 
-    private List<List<Guest>> orderGuestsToBatches(Set<Guest> guestsForDay) {
-        List<List<Guest>> guestsAtBatches = new ArrayList<>();
-        List<Map<Integer,Guest>> guestsWithRandomBatchCycleIndex = generateRandomBatchIndexToGuests(guestsForDay);
+    private List<List<Guest>> orderGuestsToCycles(Set<Guest> guestsForDay) {
+        List<List<Guest>> guestsAtCycles = new ArrayList<>();
+        List<Map<Integer,Guest>> guestsWithRandomCycleIndex = generateRandomCycleIndexToGuests(guestsForDay);
 
-        for(int i = 0; i< batchCycleAmount;i++){
-            List<Guest> guestsAtBatch = new ArrayList<>();
+        for(int i = 0; i< cycleAmount; i++){
+            List<Guest> guestsAtCycle = new ArrayList<>();
 
-            for (Map<Integer,Guest> guestWithBatchIndex: guestsWithRandomBatchCycleIndex){
-                if(guestWithBatchIndex.containsKey(i)){
-                    guestsAtBatch.add(guestWithBatchIndex.get(i));
+            for (Map<Integer,Guest> guestWithCycleIndex: guestsWithRandomCycleIndex){
+                if(guestWithCycleIndex.containsKey(i)){
+                    guestsAtCycle.add(guestWithCycleIndex.get(i));
                 }
             }
 
-            guestsAtBatches.add(guestsAtBatch);
+            guestsAtCycles.add(guestsAtCycle);
         }
 
-        return guestsAtBatches;
+        return guestsAtCycles;
     }
 
-    private List<Map<Integer, Guest>> generateRandomBatchIndexToGuests(Set<Guest> guests) {
+    private List<Map<Integer, Guest>> generateRandomCycleIndexToGuests(Set<Guest> guests) {
         List<Map<Integer,Guest>> guestsWithIndex = new ArrayList<>();
         for (Guest guest:guests) {
             Map<Integer,Guest> guestWithIndex = new HashMap<>();
-            guestWithIndex.put(random.nextInt(batchCycleAmount),guest);
+            guestWithIndex.put(random.nextInt(cycleAmount),guest);
             guestsWithIndex.add(guestWithIndex);
         }
         return guestsWithIndex;

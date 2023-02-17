@@ -9,6 +9,7 @@ public class BreakfastManager implements BuffetService {
     Buffet buffet;
     Statistic statistic;
     Map<FoodType, Integer> batch;
+    List<List<Guest>> remainingGuests;
 
     public BreakfastManager(Buffet buffet, Statistic statistic) {
         this.buffet = buffet;
@@ -22,20 +23,18 @@ public class BreakfastManager implements BuffetService {
 
     public void serve(List<List<Guest>> guestsCycles) {
         int maximumGuestNumber = guestsCycles.stream().mapToInt(List::size).sum();
-        int minAvailablePotion = (int) (maximumGuestNumber * 0.03);
+        int minAvailablePotion = (int) (maximumGuestNumber * 0.07);
 
         // serving over the 8 cycle
-        for (List<Guest> guests : guestsCycles) {
+        for (int i = 0; i< guestsCycles.size();i++) {
             //Refill the buffet
             //createDummyBatches(minAvailablePotion);
-            createOptimalBatches(guestsCycles);
+            getOptimalPortions(guestsCycles,i);
             refill();
 
             //Try to feed the guests
-            for (Guest guest : guests) {
-
-
-                    guest.setIsHappiness(consumeFreshest(guest.getGuestType().getMealPreferences()));
+            for (Guest guest : guestsCycles.get(i)) {
+                guest.setIsHappiness(consumeFreshest(guest.getGuestType().getMealPreferences()));
             }
 
             //Returns the cost of all wasted meals
@@ -45,8 +44,9 @@ public class BreakfastManager implements BuffetService {
             buffet.increaseAgePairItem();
         }
         statistic.collectUnHappyGuestAmount(guestsCycles);
-            statistic.collectCostOfWastedFoodPerCycle(collectWaste(buffet.dalyCleanUp()));
+        statistic.collectCostOfWastedFoodPerCycle(collectWaste(buffet.dalyCleanUp()));
     }
+
 
 
     public void refill() {
@@ -95,10 +95,11 @@ public class BreakfastManager implements BuffetService {
         }
     }
 
-    private void createOptimalBatches(List<List<Guest>> guestsAtDay) {
+    private void getOptimalPortions(List<List<Guest>> guestsAtDay, int cycleIndex) {
         Random random = new Random();
-        for (List<Guest> guestsAtCycle : guestsAtDay) {
-            for (Guest guest : guestsAtCycle) {
+
+        for (int i= cycleIndex;i<guestsAtDay.size();i++) {
+            for (Guest guest : guestsAtDay.get(i)) {
                 List<MealType> mealPreferences = guest.getGuestType().getMealPreferences();
                 createBatch(mealPreferences.get(random.nextInt(mealPreferences.size())), 1);
             }

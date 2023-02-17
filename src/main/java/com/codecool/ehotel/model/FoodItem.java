@@ -33,7 +33,6 @@ public class FoodItem {
     }
     @Override
     public String toString(){
-
         return "age: " + ageCycle + " " + this.type.toString();
     }
 }

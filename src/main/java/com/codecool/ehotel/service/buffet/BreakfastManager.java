@@ -10,15 +10,18 @@ public class BreakfastManager implements BuffetService {
     Buffet buffet;
     Statistic statistic;
     Map<FoodType, Integer> batch;
+    boolean isDummy;
 
-    public BreakfastManager(Buffet buffet, Statistic statistic) {
+    public BreakfastManager(Buffet buffet, Statistic statistic, boolean isDummy) {
         this.buffet = buffet;
         this.statistic = statistic;
         this.batch = new HashMap<>();
+        this.isDummy = isDummy;
     }
 
     public BreakfastManager(Buffet buffet) {
         this.buffet = buffet;
+        isDummy = true;
     }
 
     public void serve(List<List<Guest>> guestsCycles) {
@@ -28,8 +31,8 @@ public class BreakfastManager implements BuffetService {
         // serving over the 8 cycle
         for (int i = 0; i< guestsCycles.size();i++) {
             //Refill the buffet
-            //createDummyBatches(minAvailablePotion);
-            getOptimalPortions(guestsCycles,i);
+            if(isDummy)createDummyBatches(minAvailablePotion);
+            else getOptimalPortions(guestsCycles,i);
             refill();
 
             //Try to feed the guests

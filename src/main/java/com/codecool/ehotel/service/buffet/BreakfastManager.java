@@ -4,12 +4,12 @@ import com.codecool.ehotel.model.*;
 import com.codecool.ehotel.service.Statistic;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class BreakfastManager implements BuffetService {
     Buffet buffet;
     Statistic statistic;
     Map<FoodType, Integer> batch;
-    List<List<Guest>> remainingGuests;
 
     public BreakfastManager(Buffet buffet, Statistic statistic) {
         this.buffet = buffet;
@@ -44,9 +44,8 @@ public class BreakfastManager implements BuffetService {
             buffet.increaseAgePairItem();
         }
         statistic.collectUnHappyGuestAmount(guestsCycles);
-        statistic.collectCostOfWastedFoodPerCycle(collectWaste(buffet.dalyCleanUp()));
+            statistic.collectCostOfWastedFoodPerCycle(collectWaste(buffet.dalyCleanUp()));
     }
-
 
 
     public void refill() {
@@ -88,10 +87,9 @@ public class BreakfastManager implements BuffetService {
                 .map(Optional::get)
                 .min(Comparator.comparingInt(FoodItem::getAgeCycle));
     }
-
-    private void createDummyBatches(int minAvailablePotion) {
+    private void createDummyBatches(int minAvailablePotion  ){
         for (MealType mealType : MealType.values()) {
-            createBatch(mealType, minAvailablePotion - buffet.foodItemCount(mealType));
+           createBatch(mealType, minAvailablePotion - buffet.foodItemCount(mealType));
         }
     }
 

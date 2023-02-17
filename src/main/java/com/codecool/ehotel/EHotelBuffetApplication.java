@@ -29,28 +29,16 @@ public class EHotelBuffetApplication {
 
         // Run breakfast buffet
         LocalDate currentDay = SEASON_START;
-        Set<Guest> x = new HashSet<>();
-        while (currentDay.isBefore(SEASON_END)){
+        while (currentDay.isBefore(SEASON_END)) {
             List<List<Guest>> dailyGuests = breakfastGuestService.getOrderedGuestForDay(currentDay);
             buffetService.serve(dailyGuests);
 
             statistic.gatherStatistics(breakfastGuestService.numberOfGuestAtGivenDay(currentDay));
-            System.out.println("!!!!!!!!!!!!!!  " + statistic.getDailyGuestAmount() + "  "+ statistic.getDailyUnhappyGuestAmount() + "  "+statistic.getDailyWasteCost());
-            statistic.displayStatistics(
-                    "Daily",
-                    CURRENCY,
-                    statistic.getDailyUnhappyGuestAmount(),
-                    statistic.getDailyGuestAmount(),
-                    statistic.getDailyWasteCost());
+            statistic.displayDailyStatistics(currentDay, CURRENCY);
             statistic.clearDailyStatistics();
             currentDay = currentDay.plusDays(1);
         }
-        statistic.displayStatistics(
-                "Seasonally",
-                CURRENCY,
-                statistic.getSeasonallyUnhappyGuestAmount(),
-                statistic.getSeasonalGuestAmount(),
-                statistic.getSeasonallyWasteCost());
+        statistic.displaySeasonalStatistics(CURRENCY);
 
     }
 }
